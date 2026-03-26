@@ -52,92 +52,150 @@ See Updated Progress → Feel Good → Come Back Tomorrow
 
 ### Subtasks
 
-- [ ] **1.1.1**: Initialize Next.js project
+- [x] **1.1.1**: Initialize Next.js project ✅ DONE
   ```bash
-  npx create-next-app@latest tapasya --typescript --tailwind --app
-  cd tapasya
+  npx create-next-app@latest tapasya-web --typescript --tailwind --app
   ```
   - ✅ **Acceptance Criteria**:
-    - Next.js 14+ installed
+    - Next.js 16.2.1 installed (React 19, Tailwind v4)
     - TypeScript configured
-    - Tailwind CSS working
-    - App router enabled
-    - Project runs on `pnpm dev`
+    - Tailwind CSS v4 working (CSS-first, no tailwind.config.ts)
+    - App router enabled (React Compiler on)
+    - Project runs on `npm run dev`
+  > **Note**: Scaffold is in `tapasya-web/` subdirectory. Uses `npm` (not pnpm). Tailwind v4 (not v3 — different config approach).
 
 - [ ] **1.1.2**: Install core dependencies
+  > ⚠️ **Note**: Use `npm` (scaffold used npm, not pnpm). `@supabase/auth-helpers-nextjs` is deprecated — use `@supabase/ssr` instead. No shadcn/ui (see 1.1.3).
   ```bash
-  pnpm add @supabase/supabase-js @supabase/auth-helpers-nextjs
-  pnpm add date-fns zod react-hook-form @hookform/resolvers
-  pnpm add recharts framer-motion lucide-react
-  pnpm add -D @types/node
+  # Supabase (use @supabase/ssr, NOT the deprecated @supabase/auth-helpers-nextjs)
+  npm install @supabase/supabase-js @supabase/ssr
+
+  # Forms & validation
+  npm install react-hook-form zod @hookform/resolvers
+
+  # Radix UI primitives (accessible, unstyled — Phase 1 only)
+  npm install @radix-ui/react-dialog @radix-ui/react-select @radix-ui/react-slider
+  npm install @radix-ui/react-tabs @radix-ui/react-progress @radix-ui/react-label @radix-ui/react-tooltip
+
+  # Charts, animation, icons, utils
+  npm install recharts framer-motion lucide-react date-fns
   ```
   - ✅ **Acceptance Criteria**:
     - All packages installed without errors
-    - Package.json has correct versions
+    - `package.json` has correct versions
     - No TypeScript errors
 
-- [ ] **1.1.3**: Set up shadcn/ui
-  ```bash
-  npx shadcn-ui@latest init
-  ```
+- [ ] **1.1.3**: Set up Radix UI (NO shadcn/ui)
+  > **Why no shadcn?** The Digital Temple design is zero-border-radius, dark-only, copper/gold palette — every shadcn default fights this. Radix UI gives you accessibility primitives with zero style opinions. You style everything yourself with Tailwind.
+  - No init command needed. Radix packages are installed in 1.1.2.
+  - Verify Radix is importable:
+    ```typescript
+    import * as Dialog from '@radix-ui/react-dialog'
+    import * as Select from '@radix-ui/react-select'
+    // etc.
+    ```
   - ✅ **Acceptance Criteria**:
-    - shadcn/ui configured
-    - components.json created
-    - Can add components with `npx shadcn-ui add button`
+    - Can import Radix primitives without TypeScript errors
+    - No peer dependency warnings
 
-- [ ] **1.1.4**: Configure Tailwind with Digital Temple design system
+- [ ] **1.1.4**: Configure Tailwind v4 with Digital Temple design system
   - Reference: DESIGN_SYSTEM.md
-  - Update `tailwind.config.ts` with custom theme:
-    - **Colors**: Copper (#E05C00), Gold (#e9c349), Dark surfaces (#0e0e0e to #353434)
-    - **Typography**: Newsreader (serif), Inter (sans-serif), Space Mono (mono)
-    - **Border radius**: Set to 0px globally (sharp minimalism)
-  - Add Google Fonts links to `app/layout.tsx`:
-    ```html
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,800;1,400&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-    ```
-  - Add to `tailwind.config.ts`:
-    ```js
-    theme: {
-      extend: {
-        colors: {
-          brand: {
-            copper: '#E05C00',
-            primary: '#ffb694',
-            'primary-container': '#ef6712',
-          },
-          secondary: {
-            DEFAULT: '#e9c349',
-            container: '#af8d11',
-          },
-          surface: {
-            'container-lowest': '#0e0e0e',
-            DEFAULT: '#141313',
-            container: '#201f1f',
-            'container-highest': '#353434',
-          },
-          'on-surface': '#e5e2e1',
-          'on-surface-variant': '#e1c0b2',
-        },
-        fontFamily: {
-          newsreader: ['Newsreader', 'serif'],
-          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-          mono: ['Space Mono', 'monospace'],
-        },
-        borderRadius: {
-          DEFAULT: '0px',
-          none: '0px',
-        },
-      },
+  > ⚠️ **Tailwind v4 is CSS-first**: There is NO `tailwind.config.ts` in v4. All tokens are defined via `@theme` in `globals.css`. Do NOT create a tailwind.config.ts.
+
+  **Step A** — Load fonts via `next/font/google` in `src/app/layout.tsx`:
+  ```tsx
+  import { Newsreader, Inter, Space_Mono } from 'next/font/google'
+
+  const newsreader = Newsreader({
+    subsets: ['latin'],
+    weight: ['400', '600', '800'],
+    style: ['normal', 'italic'],
+    variable: '--font-newsreader-var',
+  })
+  const inter = Inter({
+    subsets: ['latin'],
+    variable: '--font-sans-var',
+  })
+  const spaceMono = Space_Mono({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+    variable: '--font-mono-var',
+  })
+
+  // Apply all three variables on <html>:
+  // className={`${newsreader.variable} ${inter.variable} ${spaceMono.variable}`}
+  ```
+
+  **Step B** — Add Material Symbols to `<head>` in `layout.tsx`:
+  ```html
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  ```
+
+  **Step C** — Replace all contents of `src/app/globals.css` with:
+  ```css
+  @import "tailwindcss";
+
+  @theme {
+    /* Brand — Copper */
+    --color-brand-copper: #E05C00;
+    --color-primary: #ffb694;
+    --color-primary-container: #ef6712;
+    --color-on-primary: #571f00;
+
+    /* Accent — Gold */
+    --color-secondary: #e9c349;
+    --color-secondary-container: #af8d11;
+    --color-on-secondary: #3c2f00;
+
+    /* Surfaces (dark hierarchy) */
+    --color-background: #141313;
+    --color-surface: #141313;
+    --color-surface-container-lowest: #0e0e0e;
+    --color-surface-container-low: #1c1b1b;
+    --color-surface-container: #201f1f;
+    --color-surface-container-high: #2a2a2a;
+    --color-surface-container-highest: #353434;
+    --color-surface-bright: #3a3939;
+
+    /* Text */
+    --color-on-surface: #e5e2e1;
+    --color-on-surface-variant: #e1c0b2;
+    --color-outline: #a88a7e;
+    --color-outline-variant: #594237;
+
+    /* Error */
+    --color-error: #ffb4ab;
+    --color-error-container: #93000a;
+
+    /* Typography — variables reference next/font CSS vars */
+    --font-newsreader: var(--font-newsreader-var), serif;
+    --font-sans: var(--font-sans-var), ui-sans-serif, system-ui;
+    --font-mono: var(--font-mono-var), monospace;
+
+    /* Border radius — ALL ZERO (Digital Temple rule) */
+    --radius: 0px;
+    --radius-sm: 0px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --radius-xl: 0px;
+    --radius-full: 9999px; /* Only for pill badges */
+  }
+
+  @layer base {
+    html {
+      background-color: #141313;
+      color: #e5e2e1;
     }
-    ```
+  }
+  ```
+
   - ✅ **Acceptance Criteria**:
-    - All temple colors available (bg-brand-copper, text-secondary, etc.)
-    - Fonts load correctly (Newsreader, Inter, Space Mono)
-    - Border radius is 0px globally
-    - Material Symbols icons accessible
-    - Test by creating sample component with these styles
+    - `bg-brand-copper`, `text-secondary`, `bg-surface-container` etc. work as Tailwind classes
+    - `font-newsreader`, `font-sans`, `font-mono` classes apply correct fonts
+    - All elements have 0px border radius by default
+    - `rounded-full` still works (9999px — for pill badges)
+    - Material Symbols icons render correctly
+    - Page renders on dark background (#141313) by default
     - No console errors
 
 - [ ] **1.1.5**: Set up folder structure
@@ -352,7 +410,8 @@ See Updated Progress → Feel Good → Come Back Tomorrow
     - Session created
     - User redirected correctly
 
-- [ ] **1.3.7**: Create auth middleware
+- [ ] **1.3.7**: Create auth proxy (route protection)
+  > ⚠️ **Next.js 16**: The file is `src/proxy.ts`, NOT `src/middleware.ts`. The export must be a default function named `proxy`.
   - Protect dashboard routes
   - Redirect to login if not authenticated
   - ✅ **Acceptance Criteria**:

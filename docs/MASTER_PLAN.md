@@ -377,12 +377,24 @@ Convert visitors → signed-up users in < 30 seconds
 
 **Route**: `/` (root)
 
-**Authentication Flow**:
+**Authentication Flow** (using Supabase Auth — NOT NextAuth):
 ```typescript
-// Using NextAuth.js
-signIn('google', { callbackUrl: '/onboarding' })
-signIn('github', { callbackUrl: '/onboarding' })
-signIn('credentials', { email, password, callbackUrl: '/onboarding' })
+const supabase = createClient()
+
+// Google OAuth
+await supabase.auth.signInWithOAuth({
+  provider: 'google',
+  options: { redirectTo: `${origin}/auth/callback?next=/onboarding` }
+})
+
+// GitHub OAuth
+await supabase.auth.signInWithOAuth({
+  provider: 'github',
+  options: { redirectTo: `${origin}/auth/callback?next=/onboarding` }
+})
+
+// Email/password
+await supabase.auth.signInWithPassword({ email, password })
 ```
 
 **Success Metric**: User clicks auth button within 10 seconds
@@ -469,19 +481,24 @@ const schema = z.object({
 });
 ```
 
-**Database Action**:
+**Database Action** (using Supabase client — NOT Prisma):
 ```typescript
-const skill = await prisma.skill.create({
-  data: {
+const supabase = createClient()
+const { data: { user } } = await supabase.auth.getUser()
+
+const { data: skill, error } = await supabase
+  .from('skills')
+  .insert({
     name: formData.name,
     icon: formData.icon,
-    targetHours: formData.targetHours,
-    dailyGoalMinutes: formData.dailyGoalMinutes,
-    userId: session.user.id,
-    color: "#F97316", // default saffron
-    isActive: true
-  }
-});
+    target_hours: formData.targetHours,
+    daily_goal_minutes: formData.dailyGoalMinutes,
+    user_id: user.id,
+    color: '#E05C00', // brand copper
+    is_active: true
+  })
+  .select()
+  .single();
 
 // Redirect to dashboard
 redirect('/dashboard');
@@ -2204,7 +2221,7 @@ async function getDashboardData(userId: string) {
 
 ## Frontend
 
-**Framework**: Next.js 14+ (App Router)
+**Framework**: Next.js 16+ (App Router)
 - Server Components by default
 - Client Components for interactivity
 - Streaming with Suspense
@@ -2212,14 +2229,22 @@ async function getDashboardData(userId: string) {
 
 **Language**: TypeScript (strict mode)
 
-**Styling**: Tailwind CSS
-- Custom saffron theme
-- shadcn/ui component library
+**Styling**: Tailwind CSS v4 (CSS-first config via `@theme`)
+- "Digital Temple" design system — see DESIGN_SYSTEM.md
+- All tokens defined in `globals.css` via `@theme` (no `tailwind.config.ts` in v4)
 - Framer Motion for animations
+- **NO shadcn/ui** — design is too opinionated; component library defaults would conflict
+
+**Component Architecture**: Radix UI Primitives (unstyled, accessible)
+- Used ONLY for complex interactive components that need accessibility:
+  `@radix-ui/react-dialog`, `@radix-ui/react-select`, `@radix-ui/react-slider`,
+  `@radix-ui/react-tabs`, `@radix-ui/react-progress`, `@radix-ui/react-label`,
+  `@radix-ui/react-tooltip`
+- All other components (buttons, cards, nav, timer, heatmap) are built custom with Tailwind
 
 **State Management**:
-- Server State: TanStack Query (React Query) OR Supabase Realtime
-- Client State: Zustand (minimal)
+- Server State: Supabase client (direct queries from Server Components)
+- Client State: React state / useReducer (minimal — avoid Zustand for Phase 1)
 - Form State: React Hook Form + Zod
 
 **Charts**: Recharts

@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand — Copper */
+  --color-brand-copper: #E05C00;
+  --color-primary: #ffb694;
+  --color-primary-container: #ef6712;
+  --color-on-primary: #571f00;
+
+  /* Accent — Gold */
+  --color-secondary: #e9c349;
+  --color-secondary-container: #af8d11;
+  --color-on-secondary: #3c2f00;
+
+  /* Surfaces */
+  --color-surface-container-lowest: #0e0e0e;
+  --color-background: #141313;
+  --color-surface: #141313;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353434;
+  --color-surface-bright: #3a3939;
+
+  /* Text */
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #e1c0b2;
+  --color-outline: #a88a7e;
+  --color-outline-variant: #594237;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+
+  /* Fonts — reference next/font CSS vars set in layout.tsx */
+  --font-newsreader: var(--font-newsreader-var), serif;
+  --font-sans: var(--font-sans-var), ui-sans-serif, system-ui;
+  --font-mono: var(--font-mono-var), monospace;
+
+  /* Border radius — ALL ZERO (Digital Temple rule) */
+  --radius: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  html {
+    background-color: #141313;
+    color: #e5e2e1;
+  }
+}
