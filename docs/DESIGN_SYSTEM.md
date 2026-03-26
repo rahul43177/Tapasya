@@ -426,12 +426,83 @@ border-radius: 9999px; /* Full rounds only */
 </button>
 ```
 
+#### Inverted Button
+```html
+<button class="py-3 px-6 bg-on-surface text-surface font-sans font-semibold
+               uppercase tracking-widest text-xs
+               hover:opacity-90 transition-opacity">
+  Inverted
+</button>
+```
+
+#### Outlined Button
+```html
+<button class="py-3 px-6 bg-transparent border border-on-surface text-on-surface
+               font-sans font-semibold uppercase tracking-widest text-xs
+               hover:bg-on-surface hover:text-surface transition-all duration-200">
+  Outlined
+</button>
+```
+
 #### Ghost Button
 ```html
 <button class="py-3 text-on-surface-variant opacity-70
                hover:opacity-100 hover:text-primary transition-colors">
   View Details
 </button>
+```
+
+#### Action Icon Button (Small)
+```html
+<!-- Small square icon-only action button -->
+<button class="w-9 h-9 flex items-center justify-center
+               bg-surface-container border border-surface-container-highest
+               text-on-surface-variant hover:text-primary
+               hover:border-primary transition-colors">
+  <span class="material-symbols-outlined text-base">edit</span>
+</button>
+```
+
+---
+
+### Search Input
+
+```html
+<div class="flex items-center gap-3 bg-surface-container-high px-4 py-3
+            border border-surface-container-highest
+            focus-within:border-outline transition-colors">
+  <span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+  <input
+    type="text"
+    placeholder="Search"
+    class="bg-transparent text-on-surface placeholder:text-on-surface-variant
+           font-sans text-sm flex-1 outline-none"
+  />
+</div>
+```
+
+---
+
+### Bottom Navigation (Mobile)
+
+```html
+<!-- Mobile only — hidden on lg+ -->
+<nav class="fixed bottom-0 left-0 right-0 lg:hidden
+            bg-surface-container-lowest border-t border-surface-container-highest
+            flex items-center justify-around px-4 py-3 z-50">
+  <button class="flex flex-col items-center gap-1 text-primary">
+    <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1">home</span>
+    <span class="text-[10px] uppercase tracking-widest font-sans">Home</span>
+  </button>
+  <button class="flex flex-col items-center gap-1 text-on-surface-variant opacity-60">
+    <span class="material-symbols-outlined text-xl">search</span>
+    <span class="text-[10px] uppercase tracking-widest font-sans">Search</span>
+  </button>
+  <button class="flex flex-col items-center gap-1 text-on-surface-variant opacity-60">
+    <span class="material-symbols-outlined text-xl">person</span>
+    <span class="text-[10px] uppercase tracking-widest font-sans">Profile</span>
+  </button>
+</nav>
 ```
 
 ---
