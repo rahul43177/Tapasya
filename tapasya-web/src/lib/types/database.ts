@@ -83,6 +83,7 @@ export type Database = {
           last_active_at: string
           longest_streak: number
           notifications_enabled: boolean
+          role: string
           streak_risk_alerts: boolean
           timezone: string
           total_hours: number
@@ -104,6 +105,7 @@ export type Database = {
           last_active_at?: string
           longest_streak?: number
           notifications_enabled?: boolean
+          role?: string
           streak_risk_alerts?: boolean
           timezone?: string
           total_hours?: number
@@ -125,6 +127,7 @@ export type Database = {
           last_active_at?: string
           longest_streak?: number
           notifications_enabled?: boolean
+          role?: string
           streak_risk_alerts?: boolean
           timezone?: string
           total_hours?: number
