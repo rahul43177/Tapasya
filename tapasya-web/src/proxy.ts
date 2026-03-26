@@ -1,12 +1,13 @@
 import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import { updateSession } from '@/lib/supabase/middleware'
 
-// Auth route protection — fully implemented in Task 1.3.7
-// Placeholder: pass all requests through until Supabase auth is wired up
-export default function proxy(request: NextRequest) {
-  return NextResponse.next()
+export default async function proxy(request: NextRequest) {
+  return updateSession(request)
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Run on all routes except static files and images
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

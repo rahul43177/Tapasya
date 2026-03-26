@@ -1,2 +1,2 @@
-// Shared TypeScript types — database types added in Task 1.2.4
-export {}
+export type { Database, Json } from './database'
+export type { Tables, TablesInsert, TablesUpdate, Enums } from './database'
