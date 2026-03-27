@@ -17,6 +17,8 @@ const NAV_ITEMS = [
   { href: '/skills', label: 'Skills', icon: 'menu_book' },
   { href: '/sessions', label: 'Sessions', icon: 'history' },
   { href: '/analytics', label: 'Analytics', icon: 'bar_chart' },
+  { href: '/profile', label: 'Profile', icon: 'person' },
+  { href: '/settings', label: 'Settings', icon: 'settings' },
 ]
 
 export default function Sidebar({ displayName, totalHours, role }: SidebarProps) {
