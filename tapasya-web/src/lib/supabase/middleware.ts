@@ -1,14 +1,37 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import type { Database } from '@/lib/types/database'
+import { getAuthenticatedUser, hasSupabaseAuthCookie } from '@/lib/supabase/auth'
 
 // Protected routes — require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/skills', '/analytics', '/onboarding']
+const PROTECTED_ROUTES = ['/dashboard', '/skills', '/analytics', '/onboarding', '/sessions']
 
 // Auth routes — redirect to dashboard if already authenticated
 const AUTH_ROUTES = ['/login', '/signup']
 
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  const isProtected = PROTECTED_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  )
+  const isAuthPage = AUTH_ROUTES.some((route) => pathname.startsWith(route))
+  const hasAuthCookie = hasSupabaseAuthCookie(request.cookies.getAll())
+
+  if (!isProtected && !isAuthPage) {
+    return NextResponse.next({ request })
+  }
+
+  if (!hasAuthCookie && isProtected) {
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = '/login'
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  if (!hasAuthCookie && isAuthPage) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient<Database>(
@@ -35,16 +58,7 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: Do not add code between createServerClient and getUser.
   // A subtle bug will make it very hard to debug intermittent session issues.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
-
-  const isProtected = PROTECTED_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  )
-  const isAuthPage = AUTH_ROUTES.some((route) => pathname.startsWith(route))
+  const user = await getAuthenticatedUser(supabase)
 
   // Not logged in → trying to access protected route → redirect to login
   if (!user && isProtected) {
