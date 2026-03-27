@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -71,19 +72,25 @@ export default function SignupForm() {
 
   async function signInWithOAuth(provider: OAuthProvider) {
     setOauthLoading(provider)
+    setServerError(null)
     const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
     })
+
+    if (error) {
+      setOauthLoading(null)
+      setServerError(error.message)
+    }
   }
 
   if (success) {
     return (
       <div className="w-full max-w-sm text-center">
-        <a href="/" className="inline-block mb-6">
+        <Link href="/" className="inline-block mb-6">
           <span className="font-newsreader text-3xl italic font-bold text-brand-copper">Tapasya</span>
-        </a>
+        </Link>
         <div className="p-8 bg-surface-container border-l-4 border-secondary">
           <p className="font-newsreader text-xl italic text-on-surface mb-3">Check your email</p>
           <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
@@ -92,7 +99,7 @@ export default function SignupForm() {
         </div>
         <p className="mt-6 text-xs font-sans text-on-surface-variant">
           Already confirmed?{' '}
-          <a href="/login" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Sign in</a>
+          <Link href="/login" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Sign in</Link>
         </p>
       </div>
     )
@@ -101,9 +108,9 @@ export default function SignupForm() {
   return (
     <div className="w-full max-w-sm">
       <div className="text-center mb-10">
-        <a href="/" className="inline-block">
+        <Link href="/" className="inline-block">
           <span className="font-newsreader text-3xl italic font-bold text-brand-copper">Tapasya</span>
-        </a>
+        </Link>
         <h1 className="mt-4 font-newsreader text-2xl italic text-on-surface">Begin your journey</h1>
         <p className="mt-1 font-sans text-sm text-on-surface-variant">10,000 hours starts with the first minute</p>
       </div>
@@ -113,11 +120,11 @@ export default function SignupForm() {
       )}
 
       <div className="space-y-3 mb-6">
-        <button onClick={() => signInWithOAuth('google')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}>
+        <button type="button" onClick={() => signInWithOAuth('google')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}>
           {oauthLoading === 'google' ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon />}
           Continue with Google
         </button>
-        <button onClick={() => signInWithOAuth('github')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}>
+        <button type="button" onClick={() => signInWithOAuth('github')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}>
           {oauthLoading === 'github' ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitHubIcon />}
           Continue with GitHub
         </button>
@@ -166,7 +173,7 @@ export default function SignupForm() {
 
       <p className="mt-8 text-xs font-sans text-on-surface-variant text-center">
         Already have an account?{' '}
-        <a href="/login" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Sign in</a>
+        <Link href="/login" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Sign in</Link>
       </p>
     </div>
   )

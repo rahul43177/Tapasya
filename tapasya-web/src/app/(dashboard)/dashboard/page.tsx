@@ -1,18 +1,11 @@
-import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { requireAuthenticatedUser } from '@/lib/supabase/auth'
 import { formatDistanceToNow } from 'date-fns'
 import FocusTimer from '@/components/focus-timer/focus-timer'
-
-function getMasteryLevel(hours: number): string {
-  if (hours >= 10000) return 'Master'
-  if (hours >= 5000) return 'Expert'
-  if (hours >= 3000) return 'Advanced'
-  if (hours >= 1000) return 'Proficient'
-  if (hours >= 500) return 'Competent'
-  if (hours >= 200) return 'Novice'
-  if (hours >= 20) return 'Beginner'
-  return 'Aspirant'
-}
+import Heatmap from '@/components/dashboard/heatmap'
+import type { HeatmapDay } from '@/components/dashboard/heatmap'
+import { getMasteryLevel } from '@/lib/utils/mastery'
 
 function ProgressRing({ percent, size = 120, stroke = 8 }: { percent: number; size?: number; stroke?: number }) {
   const r = (size - stroke) / 2
@@ -31,23 +24,34 @@ function ProgressRing({ percent, size = 120, stroke = 8 }: { percent: number; si
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const user = await requireAuthenticatedUser(supabase)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const [profileRes, skillsRes, todaySessionsRes, recentSessionsRes] = await Promise.all([
+  const heatmapStart = new Date(today)
+  heatmapStart.setDate(today.getDate() - 364)
+
+  const [profileRes, skillsRes, todaySessionsRes, recentSessionsRes, heatmapRes] = await Promise.all([
     supabase.from('profiles').select('full_name, username, total_hours, total_sessions, current_global_streak, longest_streak, daily_goal_minutes').eq('id', user.id).single(),
     supabase.from('skills').select('*').eq('user_id', user.id).eq('is_active', true).order('order', { ascending: true }),
     supabase.from('focus_sessions').select('duration').eq('user_id', user.id).gte('start_time', today.toISOString()),
     supabase.from('focus_sessions').select('id, duration, start_time, focus_rating, skill_id, skills(name, icon)').eq('user_id', user.id).order('start_time', { ascending: false }).limit(5),
+    supabase.from('focus_sessions').select('start_time, duration').eq('user_id', user.id).gte('start_time', heatmapStart.toISOString()),
   ])
 
   const profile = profileRes.data
   const skills = skillsRes.data ?? []
   const todaySessions = todaySessionsRes.data ?? []
   const recentSessions = recentSessionsRes.data ?? []
+
+  // Aggregate heatmap data by date
+  const heatmapMap = new Map<string, number>()
+  for (const s of heatmapRes.data ?? []) {
+    const dateStr = new Date(s.start_time).toISOString().slice(0, 10)
+    heatmapMap.set(dateStr, (heatmapMap.get(dateStr) ?? 0) + (s.duration ?? 0))
+  }
+  const heatmapData: HeatmapDay[] = Array.from(heatmapMap.entries()).map(([date, minutes]) => ({ date, minutes }))
 
   const todayMinutes = todaySessions.reduce((sum, s) => sum + (s.duration ?? 0), 0)
   const dailyGoalMinutes = profile?.daily_goal_minutes ?? 120
@@ -96,14 +100,14 @@ export default async function DashboardPage() {
       {/* Focus Timer */}
       {skills.length > 0 ? (
         <div className="mb-6">
-          <FocusTimer skills={skills} userId={user.id} dailyGoalMinutes={dailyGoalMinutes} />
+          <FocusTimer skills={skills} userId={user.id} />
         </div>
       ) : (
-        <div className="bg-surface-container border border-surface-container-highest p-6 mb-6 text-center">
+          <div className="bg-surface-container border border-surface-container-highest p-6 mb-6 text-center">
           <p className="font-newsreader italic text-on-surface-variant mb-3">No skills yet</p>
-          <a href="/onboarding" className="inline-flex items-center gap-2 px-4 py-2 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors">
+          <Link href="/onboarding" className="inline-flex items-center gap-2 px-4 py-2 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors">
             Add your first skill →
-          </a>
+          </Link>
         </div>
       )}
 
@@ -112,14 +116,14 @@ export default async function DashboardPage() {
         <div className="bg-surface-container border border-surface-container-highest">
           <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Skills</p>
-            <a href="/skills" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">Manage →</a>
+            <Link href="/skills" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">Manage →</Link>
           </div>
           <div className="divide-y divide-surface-container-highest">
             {skills.length === 0 && (
-              <div className="px-6 py-8 text-center">
-                <p className="font-sans text-sm text-on-surface-variant">No skills yet.</p>
-                <a href="/onboarding" className="text-xs text-brand-copper hover:text-primary transition-colors mt-1 inline-block">+ Add skill</a>
-              </div>
+                <div className="px-6 py-8 text-center">
+                  <p className="font-sans text-sm text-on-surface-variant">No skills yet.</p>
+                <Link href="/onboarding" className="text-xs text-brand-copper hover:text-primary transition-colors mt-1 inline-block">+ Add skill</Link>
+                </div>
             )}
             {skills.map((skill) => {
               const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
@@ -145,7 +149,7 @@ export default async function DashboardPage() {
               )
             })}
             <div className="px-6 py-3">
-              <a href="/skills/new" className="text-xs font-sans text-on-surface-variant hover:text-brand-copper transition-colors">+ Add skill</a>
+              <Link href="/skills/new" className="text-xs font-sans text-on-surface-variant hover:text-brand-copper transition-colors">+ Add skill</Link>
             </div>
           </div>
         </div>
@@ -174,8 +178,9 @@ export default async function DashboardPage() {
 
           {/* Recent sessions */}
           <div className="bg-surface-container border border-surface-container-highest">
-            <div className="px-6 py-4 border-b border-surface-container-highest">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
               <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Recent Sessions</p>
+              <Link href="/sessions" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">View all →</Link>
             </div>
             <div className="divide-y divide-surface-container-highest">
               {recentSessions.length === 0 && (
@@ -208,6 +213,11 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Activity Heatmap */}
+      <div className="mt-6">
+        <Heatmap data={heatmapData} />
       </div>
     </div>
   )

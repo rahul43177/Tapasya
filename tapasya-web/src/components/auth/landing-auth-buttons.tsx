@@ -1,38 +1,47 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils/cn'
 import { Loader2 } from 'lucide-react'
 
-type Provider = 'google' | 'github' | 'email'
+type OAuthProvider = 'google' | 'github'
 
 const btnBase = 'flex items-center justify-center gap-3 w-full py-4 px-6 font-sans font-semibold text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
 
 export default function LandingAuthButtons() {
-  const router = useRouter()
-  const [loading, setLoading] = useState<Provider | null>(null)
+  const [loading, setLoading] = useState<OAuthProvider | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  async function signInWithOAuth(provider: 'google' | 'github') {
+  async function signInWithOAuth(provider: OAuthProvider) {
     setLoading(provider)
+    setError(null)
     const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
     })
-  }
 
-  function goToSignup() {
-    setLoading('email')
-    router.push('/signup')
+    if (error) {
+      setLoading(null)
+      setError(error.message)
+    }
   }
 
   return (
     <div className="w-full flex flex-col gap-3">
+      {error && (
+        <div className="px-4 py-3 bg-error-container border-l-2 border-error text-sm font-sans text-error">
+          {error}
+        </div>
+      )}
+
       <button
+        type="button"
         onClick={() => signInWithOAuth('google')}
         disabled={loading !== null}
-        className={`${btnBase} bg-white text-neutral-800 hover:bg-neutral-100`}
+        className={cn(btnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}
       >
         {loading === 'google' ? (
           <Loader2 className="w-5 h-5 animate-spin" />
@@ -43,9 +52,10 @@ export default function LandingAuthButtons() {
       </button>
 
       <button
+        type="button"
         onClick={() => signInWithOAuth('github')}
         disabled={loading !== null}
-        className={`${btnBase} bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline`}
+        className={cn(btnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}
       >
         {loading === 'github' ? (
           <Loader2 className="w-5 h-5 animate-spin" />
@@ -61,17 +71,13 @@ export default function LandingAuthButtons() {
         <div className="flex-1 h-px bg-surface-container-highest" />
       </div>
 
-      <button
-        onClick={goToSignup}
-        disabled={loading !== null}
-        className={`${btnBase} bg-brand-copper text-white hover:bg-primary-container group`}
+      <Link
+        href="/signup"
+        className={cn(btnBase, 'bg-brand-copper text-white hover:bg-primary-container group')}
       >
-        {loading === 'email' && <Loader2 className="w-5 h-5 animate-spin" />}
         Continue with Email
-        {loading !== 'email' && (
-          <span className="ml-auto text-white/60 group-hover:translate-x-0.5 transition-transform">→</span>
-        )}
-      </button>
+        <span className="ml-auto text-white/60 group-hover:translate-x-0.5 transition-transform">→</span>
+      </Link>
     </div>
   )
 }

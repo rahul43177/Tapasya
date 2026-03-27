@@ -8,17 +8,22 @@ import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
 import { EMOJI_OPTIONS, TARGET_HOURS, COLORS, skillNameSchema, type SkillNameValues } from '@/lib/utils/skill-form-config'
+import type { Tables } from '@/lib/types'
 
-const inputClass = 'w-full px-4 py-3 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:border-outline transition-colors disabled:opacity-50'
+type Skill = Tables<'skills'>
 
-export default function CreateSkillForm({ userId }: { userId: string }) {
+interface Props {
+  skill: Skill
+}
+
+export default function EditSkillForm({ skill }: Props) {
   const router = useRouter()
-  const [selectedIcon, setSelectedIcon] = useState('💻')
-  const [selectedColor, setSelectedColor] = useState('#E05C00')
-  const [selectedTarget, setSelectedTarget] = useState(10000)
-  const [dailyGoal, setDailyGoal] = useState(120)
+  const [selectedIcon, setSelectedIcon] = useState(skill.icon)
+  const [selectedColor, setSelectedColor] = useState(skill.color)
+  const [selectedTarget, setSelectedTarget] = useState(skill.target_hours)
+  const [dailyGoal, setDailyGoal] = useState(skill.daily_goal_minutes ?? 120)
   const [serverError, setServerError] = useState<string | null>(null)
-  const [skipping, setSkipping] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const {
     register,
@@ -26,55 +31,49 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
     formState: { errors, isSubmitting },
   } = useForm<SkillNameValues>({
     resolver: zodResolver(skillNameSchema),
+    defaultValues: { name: skill.name },
   })
 
   async function onSubmit(values: SkillNameValues) {
     setServerError(null)
     const supabase = createClient()
 
-    const { error } = await supabase.from('skills').insert({
-      user_id: userId,
+    const { error } = await supabase.from('skills').update({
       name: values.name,
       icon: selectedIcon,
       color: selectedColor,
       target_hours: selectedTarget,
       daily_goal_minutes: dailyGoal,
-    })
+    }).eq('id', skill.id).eq('user_id', skill.user_id)
 
     if (error) {
       setServerError(error.message)
       return
     }
 
-    router.push('/dashboard')
+    router.push('/skills')
     router.refresh()
   }
 
-  async function handleSkip() {
-    setSkipping(true)
-    router.push('/dashboard')
+  async function handleDelete() {
+    if (!confirm('Archive this skill? Your session history will be preserved.')) return
+    setDeleting(true)
+    const supabase = createClient()
+    await supabase.from('skills').update({ is_active: false }).eq('id', skill.id).eq('user_id', skill.user_id)
+    router.push('/skills')
+    router.refresh()
   }
 
-  const isLoading = isSubmitting || skipping
+  const isLoading = isSubmitting || deleting
+
   const goalHours = Math.floor(dailyGoal / 60)
   const goalMins = dailyGoal % 60
-  const goalDisplay = goalHours > 0 ? `${goalHours}h${goalMins > 0 ? ` ${goalMins}m` : ''}` : `${goalMins}m`
+  const goalDisplay = goalHours > 0
+    ? `${goalHours}h${goalMins > 0 ? ` ${goalMins}m` : ''}`
+    : `${goalMins}m`
 
   return (
-    <div className="w-full max-w-md">
-      {/* Header */}
-      <div className="mb-10">
-        <a href="/" className="inline-block mb-6">
-          <span className="font-newsreader text-2xl italic font-bold text-brand-copper">Tapasya</span>
-        </a>
-        <h1 className="font-newsreader text-3xl italic font-bold text-on-surface">
-          What skill do you want to master?
-        </h1>
-        <p className="mt-2 font-sans text-sm text-on-surface-variant">
-          This is the beginning of 10,000 hours.
-        </p>
-      </div>
-
+    <div className="w-full">
       {serverError && (
         <div className="mb-6 px-4 py-3 bg-error-container border-l-2 border-error text-sm font-sans text-error">
           {serverError}
@@ -94,7 +93,11 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
             placeholder="e.g. Piano, Data Structures, Spanish"
             disabled={isLoading}
             {...register('name')}
-            className={inputClass}
+            className={cn(
+              'w-full px-4 py-3 bg-surface-container border border-surface-container-highest',
+              'text-on-surface font-sans text-sm placeholder:text-on-surface-variant/40',
+              'focus:outline-none focus:border-outline transition-colors disabled:opacity-50'
+            )}
           />
           {errors.name && (
             <p className="mt-1.5 text-xs font-sans text-error">{errors.name.message}</p>
@@ -103,7 +106,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
 
         {/* Icon picker */}
         <div>
-          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">Choose an Icon</p>
+          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
+            Choose an Icon
+          </p>
           <div className="flex flex-wrap gap-2">
             {EMOJI_OPTIONS.map((emoji) => (
               <button
@@ -126,7 +131,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
 
         {/* Color picker */}
         <div>
-          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">Color</p>
+          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
+            Color
+          </p>
           <div className="flex gap-2">
             {COLORS.map((color) => (
               <button
@@ -135,7 +142,10 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
                 onClick={() => setSelectedColor(color)}
                 disabled={isLoading}
                 style={{ backgroundColor: color }}
-                className={cn('w-8 h-8 transition-all', selectedColor === color ? 'ring-2 ring-offset-2 ring-offset-background ring-white scale-110' : '')}
+                className={cn(
+                  'w-8 h-8 transition-all',
+                  selectedColor === color ? 'ring-2 ring-offset-2 ring-offset-background ring-white scale-110' : ''
+                )}
                 aria-label={color}
               />
             ))}
@@ -144,7 +154,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
 
         {/* Target hours */}
         <div>
-          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">Your Goal</p>
+          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
+            Your Goal
+          </p>
           <div className="space-y-2">
             {TARGET_HOURS.map(({ label, sublabel, value }) => (
               <button
@@ -162,7 +174,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
                 <span className="font-sans text-sm text-on-surface">{label}</span>
                 <span className="flex items-center gap-3">
                   <span className="text-xs font-sans text-on-surface-variant">{sublabel}</span>
-                  {selectedTarget === value && <span className="text-brand-copper text-sm">✓</span>}
+                  {selectedTarget === value && (
+                    <span className="text-brand-copper text-sm">✓</span>
+                  )}
                 </span>
               </button>
             ))}
@@ -172,7 +186,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
         {/* Daily goal slider */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Daily Target</p>
+            <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">
+              Daily Target
+            </p>
             <p className="font-mono text-sm text-secondary">{goalDisplay}/day</p>
           </div>
           <input
@@ -195,20 +211,27 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
         <div className="flex items-center gap-3 pt-2">
           <button
             type="button"
-            onClick={handleSkip}
+            onClick={handleDelete}
             disabled={isLoading}
-            className="px-4 py-3 font-sans text-sm text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-50"
+            className={cn(
+              'px-4 py-3 font-sans text-sm border transition-colors disabled:opacity-50',
+              'text-on-surface-variant border-surface-container-highest hover:border-error hover:text-error'
+            )}
           >
-            {skipping ? <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> : null}
-            Skip for now
+            {deleting ? <Loader2 className="w-4 h-4 animate-spin inline mr-1" /> : null}
+            Archive
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className={cn(
+              'flex-1 flex items-center justify-center gap-2 py-3 px-6',
+              'bg-brand-copper text-white font-sans font-semibold text-sm',
+              'hover:bg-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
           >
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            Create Skill →
+            Save Changes
           </button>
         </div>
       </form>

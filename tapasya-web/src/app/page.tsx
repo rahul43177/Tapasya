@@ -1,12 +1,18 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthenticatedUser, hasSupabaseAuthCookie } from '@/lib/supabase/auth'
 import LandingAuthButtons from '@/components/auth/landing-auth-buttons'
 
 export default async function LandingPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const cookieStore = await cookies()
+  let user = null
+
+  if (hasSupabaseAuthCookie(cookieStore.getAll())) {
+    const supabase = await createClient()
+    user = await getAuthenticatedUser(supabase)
+  }
 
   if (user) redirect('/dashboard')
 
@@ -113,12 +119,12 @@ export default async function LandingPage() {
         {/* Already have an account */}
         <p className="text-xs font-sans text-on-surface-variant text-center">
           Already have an account?{' '}
-          <a
+          <Link
             href="/login"
             className="text-primary hover:text-on-surface transition-colors underline underline-offset-2"
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </main>

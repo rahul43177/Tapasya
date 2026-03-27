@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,6 +20,8 @@ type OAuthProvider = 'google' | 'github'
 
 const ERROR_MESSAGES: Record<string, string> = {
   auth_callback_failed: 'Authentication failed. Please try again.',
+  auth_callback_invalid_type: 'This confirmation link is not supported. Please request a new one.',
+  auth_callback_missing_token: 'This sign-in link is incomplete or expired. Please try again.',
 }
 
 const inputClass = 'w-full px-4 py-3 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm placeholder:text-on-surface-variant/50 focus:outline-none focus:border-outline transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
@@ -46,9 +49,10 @@ function GitHubIcon() {
 interface LoginFormProps {
   error?: string
   message?: string
+  details?: string
 }
 
-export default function LoginForm({ error, message }: LoginFormProps) {
+export default function LoginForm({ error, message, details }: LoginFormProps) {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null)
@@ -59,7 +63,7 @@ export default function LoginForm({ error, message }: LoginFormProps) {
   })
 
   const isLoading = isSubmitting || oauthLoading !== null
-  const errorMessage = serverError ?? (error ? (ERROR_MESSAGES[error] ?? error) : null)
+  const errorMessage = serverError ?? details ?? (error ? (ERROR_MESSAGES[error] ?? error) : null)
 
   async function onSubmit(values: LoginValues) {
     setServerError(null)
@@ -72,19 +76,25 @@ export default function LoginForm({ error, message }: LoginFormProps) {
 
   async function signInWithOAuth(provider: OAuthProvider) {
     setOauthLoading(provider)
+    setServerError(null)
     const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
     })
+
+    if (error) {
+      setOauthLoading(null)
+      setServerError(error.message)
+    }
   }
 
   return (
     <div className="w-full max-w-sm">
       <div className="text-center mb-10">
-        <a href="/" className="inline-block">
+        <Link href="/" className="inline-block">
           <span className="font-newsreader text-3xl italic font-bold text-brand-copper">Tapasya</span>
-        </a>
+        </Link>
         <h1 className="mt-4 font-newsreader text-2xl italic text-on-surface">Welcome back</h1>
         <p className="mt-1 font-sans text-sm text-on-surface-variant">Sign in to continue your practice</p>
       </div>
@@ -106,10 +116,7 @@ export default function LoginForm({ error, message }: LoginFormProps) {
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label htmlFor="password" className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Password</label>
-            <a href="/forgot-password" className="text-xs font-sans text-on-surface-variant hover:text-primary transition-colors">Forgot?</a>
-          </div>
+          <label htmlFor="password" className="block mb-2 text-xs uppercase tracking-widest font-sans text-on-surface-variant">Password</label>
           <div className="relative">
             <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" placeholder="••••••••" disabled={isLoading} {...register('password')} className={cn(inputClass, 'pr-12')} />
             <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors p-1" tabIndex={-1}>
@@ -132,11 +139,11 @@ export default function LoginForm({ error, message }: LoginFormProps) {
       </div>
 
       <div className="space-y-3">
-        <button onClick={() => signInWithOAuth('google')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}>
+        <button type="button" onClick={() => signInWithOAuth('google')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}>
           {oauthLoading === 'google' ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon />}
           Continue with Google
         </button>
-        <button onClick={() => signInWithOAuth('github')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}>
+        <button type="button" onClick={() => signInWithOAuth('github')} disabled={isLoading} className={cn(oauthBtnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}>
           {oauthLoading === 'github' ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitHubIcon />}
           Continue with GitHub
         </button>
@@ -144,7 +151,7 @@ export default function LoginForm({ error, message }: LoginFormProps) {
 
       <p className="mt-8 text-xs font-sans text-on-surface-variant text-center">
         Don&apos;t have an account?{' '}
-        <a href="/signup" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Create one</a>
+        <Link href="/signup" className="text-primary hover:text-on-surface transition-colors underline underline-offset-2">Create one</Link>
       </p>
     </div>
   )

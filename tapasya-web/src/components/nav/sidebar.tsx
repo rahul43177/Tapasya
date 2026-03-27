@@ -1,8 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
 import LogoutButton from '@/components/auth/logout-button'
+import { getMasteryLevel } from '@/lib/utils/mastery'
 
 interface SidebarProps {
   displayName: string
@@ -13,19 +15,9 @@ interface SidebarProps {
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: 'home' },
   { href: '/skills', label: 'Skills', icon: 'menu_book' },
+  { href: '/sessions', label: 'Sessions', icon: 'history' },
   { href: '/analytics', label: 'Analytics', icon: 'bar_chart' },
 ]
-
-function getMasteryLevel(hours: number): string {
-  if (hours >= 10000) return 'Master'
-  if (hours >= 5000) return 'Expert'
-  if (hours >= 3000) return 'Advanced'
-  if (hours >= 1000) return 'Proficient'
-  if (hours >= 500) return 'Competent'
-  if (hours >= 200) return 'Novice'
-  if (hours >= 20) return 'Beginner'
-  return 'Aspirant'
-}
 
 export default function Sidebar({ displayName, totalHours, role }: SidebarProps) {
   const pathname = usePathname()
@@ -55,9 +47,9 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
         {/* Nav */}
         <nav className="flex-1 py-4">
           {NAV_ITEMS.map(({ href, label, icon }) => {
-            const isActive = pathname === href
+            const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
             return (
-              <a
+              <Link
                 key={href}
                 href={href}
                 className={cn(
@@ -71,7 +63,7 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
                   {icon}
                 </span>
                 <span className="font-sans text-sm font-medium">{label}</span>
-              </a>
+              </Link>
             )
           })}
         </nav>
@@ -85,9 +77,9 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
       {/* Mobile bottom nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-around px-4 py-3 z-40">
         {NAV_ITEMS.map(({ href, label, icon }) => {
-          const isActive = pathname === href
+          const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
-            <a
+            <Link
               key={href}
               href={href}
               className={cn(
@@ -99,7 +91,7 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
                 {icon}
               </span>
               <span className="text-[10px] uppercase tracking-widest font-sans">{label}</span>
-            </a>
+            </Link>
           )
         })}
       </nav>
