@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { format, subDays, startOfDay } from 'date-fns'
 
@@ -139,11 +140,11 @@ export default function AnalyticsCharts({ skills, weekSessions, totalSessionMinu
             {skills.map(skill => {
               const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
               return (
-                <div key={skill.id} className="px-6 py-4 grid grid-cols-4 lg:grid-cols-6 gap-4 items-center">
-                  <div className="col-span-2 flex items-center gap-2">
+                <div key={skill.id} className="px-6 py-4 grid grid-cols-4 lg:grid-cols-6 gap-4 items-center hover:bg-surface-container-high transition-colors">
+                  <Link href={`/skills/${skill.id}/analytics`} className="col-span-2 flex items-center gap-2 cursor-pointer group">
                     <span className="text-lg">{skill.icon}</span>
-                    <span className="font-sans text-sm font-medium text-on-surface">{skill.name}</span>
-                  </div>
+                    <span className="font-sans text-sm font-medium text-on-surface group-hover:text-brand-copper transition-colors">{skill.name}</span>
+                  </Link>
                   <div className="text-right lg:text-left">
                     <p className="font-mono text-sm text-on-surface">{skill.total_hours.toFixed(1)}h</p>
                     <p className="text-[10px] font-sans text-on-surface-variant">{skill.total_sessions} sessions</p>

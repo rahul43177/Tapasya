@@ -2,10 +2,14 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser } from '@/lib/supabase/auth'
 import { formatDistanceToNow } from 'date-fns'
-import FocusTimer from '@/components/focus-timer/focus-timer'
 import Heatmap from '@/components/dashboard/heatmap'
 import type { HeatmapDay } from '@/components/dashboard/heatmap'
 import { getMasteryLevel } from '@/lib/utils/mastery'
+import { getTodayMessage } from '@/lib/utils/dashboard'
+import DashboardClientWrapper from '@/components/dashboard/dashboard-client-wrapper'
+import SkillsSection from '@/components/dashboard/skills-section'
+import WeekAtGlance from '@/components/dashboard/week-at-glance'
+import StreakWarning from '@/components/dashboard/streak-warning'
 
 function ProgressRing({ percent, size = 120, stroke = 8 }: { percent: number; size?: number; stroke?: number }) {
   const r = (size - stroke) / 2
@@ -32,18 +36,23 @@ export default async function DashboardPage() {
   const heatmapStart = new Date(today)
   heatmapStart.setDate(today.getDate() - 364)
 
-  const [profileRes, skillsRes, todaySessionsRes, recentSessionsRes, heatmapRes] = await Promise.all([
-    supabase.from('profiles').select('full_name, username, total_hours, total_sessions, current_global_streak, longest_streak, daily_goal_minutes').eq('id', user.id).single(),
+  const weekStart = new Date(today)
+  weekStart.setDate(today.getDate() - 6)
+
+  const [profileRes, skillsRes, todaySessionsRes, recentSessionsRes, heatmapRes, weekSessionsRes] = await Promise.all([
+    supabase.from('profiles').select('full_name, username, total_hours, total_sessions, current_global_streak, longest_streak, daily_goal_minutes, last_active_at, streak_risk_alerts').eq('id', user.id).single(),
     supabase.from('skills').select('*').eq('user_id', user.id).eq('is_active', true).order('order', { ascending: true }),
     supabase.from('focus_sessions').select('duration').eq('user_id', user.id).gte('start_time', today.toISOString()),
     supabase.from('focus_sessions').select('id, duration, start_time, focus_rating, skill_id, skills(name, icon)').eq('user_id', user.id).order('start_time', { ascending: false }).limit(5),
     supabase.from('focus_sessions').select('start_time, duration').eq('user_id', user.id).gte('start_time', heatmapStart.toISOString()),
+    supabase.from('focus_sessions').select('start_time, duration').eq('user_id', user.id).gte('start_time', weekStart.toISOString()),
   ])
 
   const profile = profileRes.data
   const skills = skillsRes.data ?? []
   const todaySessions = todaySessionsRes.data ?? []
   const recentSessions = recentSessionsRes.data ?? []
+  const weekSessions = weekSessionsRes.data ?? []
 
   // Aggregate heatmap data by date
   const heatmapMap = new Map<string, number>()
@@ -64,6 +73,11 @@ export default async function DashboardPage() {
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
+  // Calculate hours for motivational message
+  const todayHours = todayMinutes / 60
+  const dailyGoalHours = dailyGoalMinutes / 60
+  const motivationalMessage = getTodayMessage(todayHours, dailyGoalHours, streak)
+
   return (
     <div className="min-h-screen px-6 lg:px-10 py-8">
       {/* Header */}
@@ -71,6 +85,13 @@ export default async function DashboardPage() {
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">{greeting}</p>
         <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">{firstName}</h1>
       </div>
+
+      {/* Streak Warning */}
+      <StreakWarning
+        currentStreak={streak}
+        lastActiveAt={profile?.last_active_at ?? null}
+        streakRiskAlertsEnabled={profile?.streak_risk_alerts ?? true}
+      />
 
       {/* Today's Tapa — hero section */}
       <div className="bg-surface-container border border-surface-container-highest p-6 mb-6">
@@ -92,18 +113,16 @@ export default async function DashboardPage() {
             <div className="h-1.5 bg-surface-container-highest mb-2">
               <div className="h-full bg-brand-copper transition-all duration-700" style={{ width: `${Math.min(todayPercent, 100)}%` }} />
             </div>
-            <p className="font-sans text-xs text-on-surface-variant">{todayPercent}% of daily goal</p>
+            <p className="font-newsreader italic text-sm text-on-surface">{motivationalMessage}</p>
           </div>
         </div>
       </div>
 
       {/* Focus Timer */}
       {skills.length > 0 ? (
-        <div className="mb-6">
-          <FocusTimer skills={skills} userId={user.id} />
-        </div>
+        <DashboardClientWrapper skills={skills} userId={user.id} />
       ) : (
-          <div className="bg-surface-container border border-surface-container-highest p-6 mb-6 text-center">
+        <div className="bg-surface-container border border-surface-container-highest p-6 mb-6 text-center">
           <p className="font-newsreader italic text-on-surface-variant mb-3">No skills yet</p>
           <Link href="/onboarding" className="inline-flex items-center gap-2 px-4 py-2 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors">
             Add your first skill →
@@ -113,49 +132,13 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Skills */}
-        <div className="bg-surface-container border border-surface-container-highest">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
-            <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Skills</p>
-            <Link href="/skills" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">Manage →</Link>
-          </div>
-          <div className="divide-y divide-surface-container-highest">
-            {skills.length === 0 && (
-                <div className="px-6 py-8 text-center">
-                  <p className="font-sans text-sm text-on-surface-variant">No skills yet.</p>
-                <Link href="/onboarding" className="text-xs text-brand-copper hover:text-primary transition-colors mt-1 inline-block">+ Add skill</Link>
-                </div>
-            )}
-            {skills.map((skill) => {
-              const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
-              return (
-                <div key={skill.id} className="px-6 py-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{skill.icon}</span>
-                      <span className="font-sans text-sm font-medium text-on-surface">{skill.name}</span>
-                    </div>
-                    <span className="font-mono text-xs text-on-surface-variant">{skill.total_hours.toFixed(1)}/{skill.target_hours}h</span>
-                  </div>
-                  <div className="h-1 bg-surface-container-highest">
-                    <div className="h-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: skill.color }} />
-                  </div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-[10px] font-sans text-on-surface-variant">{pct}% to mastery</span>
-                    {skill.current_streak > 0 && (
-                      <span className="text-[10px] font-sans text-secondary">🔥 {skill.current_streak}d</span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-            <div className="px-6 py-3">
-              <Link href="/skills/new" className="text-xs font-sans text-on-surface-variant hover:text-brand-copper transition-colors">+ Add skill</Link>
-            </div>
-          </div>
-        </div>
+        <SkillsSection skills={skills} />
 
         {/* Quick stats + recent sessions */}
         <div className="space-y-6">
+          {/* Week at a Glance */}
+          <WeekAtGlance sessions={weekSessions} />
+
           {/* Quick stats */}
           <div className="bg-surface-container border border-surface-container-highest">
             <div className="px-6 py-4 border-b border-surface-container-highest">

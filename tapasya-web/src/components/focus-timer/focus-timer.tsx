@@ -84,6 +84,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
   useEffect(() => {
     if (timerState === 'idle') {
       const secs = pomodoroMinutes * 60
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRemaining(secs)
       remainingBeforePauseRef.current = secs
     }

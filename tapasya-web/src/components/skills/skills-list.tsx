@@ -60,6 +60,9 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Link href={`/skills/${skill.id}/analytics`} className="px-3 py-1.5 text-xs font-sans text-on-surface-variant border border-surface-container-highest hover:border-brand-copper hover:text-brand-copper transition-colors">
+                  Analytics
+                </Link>
                 <Link href={`/skills/${skill.id}`} className="px-3 py-1.5 text-xs font-sans text-on-surface-variant border border-surface-container-highest hover:border-outline hover:text-on-surface transition-colors">
                   Edit
                 </Link>
