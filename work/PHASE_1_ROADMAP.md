@@ -122,14 +122,16 @@ Owner: Claude (agent implemented)
 - [x] Auth routes: /login, /signup (redirect to /dashboard if logged in) ✅
 
 1.3.8 Test auth flows end to end
-- [ ] Google OAuth — test in browser
-- [ ] GitHub OAuth — test in browser
-- [ ] Email signup and login — test in browser
-- [ ] Logout — test in browser
+- [x] Google OAuth — test in browser
+- [x] GitHub OAuth — test in browser
+- [x] Email signup and login — test in browser
+- [x] Logout — test in browser
 
 Acceptance checks
-- [ ] Auth success redirects correctly — test in browser
-- [ ] Session persists on refresh — test in browser
+- [x] Auth success redirects correctly — test in browser
+- [x] Session persists on refresh — test in browser
+
+## ✅ TASK 1.3 COMPLETE
 
 ## Task 1.4: Onboarding (First Skill)
 Owner: Claude (agent implemented)
@@ -158,8 +160,17 @@ Owner: Claude (agent implemented)
 - [x] Dashboard handles zero skills gracefully ✅
 
 Acceptance checks
-- [ ] New user can create a skill — test in browser
-- [ ] Redirect works — test in browser
+- [x] New user can create a skill — test in browser
+- [x] Redirect works — test in browser
+
+## ✅ TASK 1.4 COMPLETE
+
+## ✅ PHASE 1 ADDITIONAL ITEMS (implemented by agent)
+
+Dashboard layout + sidebar — [x] done
+Focus timer (stopwatch mode) — [x] done
+Skills page with CRUD — [x] done
+Analytics page with charts — [x] done
 
 ## ⚠️ ADMIN SETUP — Run after first login
 After signing in for the first time, your User ID is shown on the dashboard.
@@ -172,6 +183,6 @@ UPDATE profiles SET role = 'admin' WHERE id = 'YOUR-USER-ID-HERE';
 The Admin badge will appear in the nav on next page load.
 
 ## Progress Notes
-- Date:
-- Notes:
-- Blockers:
+- Date: 2026-03-26
+- Notes: Phase 1 fully complete. All auth flows, onboarding, dashboard, skills CRUD, analytics, and focus timer (stopwatch) implemented. Phase 2 begins with streak system, milestones, heatmap, pomodoro timer, and session history.
+- Blockers: None
