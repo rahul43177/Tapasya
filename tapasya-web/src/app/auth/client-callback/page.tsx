@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { Loader2 } from 'lucide-react'
@@ -53,7 +53,7 @@ function buildLoginUrl(error: string, details?: string) {
   return `/login?${params.toString()}`
 }
 
-export default function ClientCallbackPage() {
+function AuthCallback() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const hasStarted = useRef(false)
@@ -127,6 +127,10 @@ export default function ClientCallbackPage() {
     void completeAuth()
   }, [router, searchParams])
 
+  return null
+}
+
+export default function ClientCallbackPage() {
   return (
     <main className="min-h-screen bg-surface-container-lowest flex items-center justify-center px-4">
       <div className="w-full max-w-sm text-center">
@@ -139,7 +143,12 @@ export default function ClientCallbackPage() {
         <p className="mt-3 font-sans text-sm text-on-surface-variant">
           Completing your session and sending you back into the app.
         </p>
+        
+        <Suspense fallback={null}>
+          <AuthCallback />
+        </Suspense>
       </div>
     </main>
   )
 }
+

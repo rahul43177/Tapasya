@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
@@ -64,9 +65,9 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
     <div className="w-full max-w-md">
       {/* Header */}
       <div className="mb-10">
-        <a href="/" className="inline-block mb-6">
+        <Link href="/" className="inline-block mb-6">
           <span className="font-newsreader text-2xl italic font-bold text-brand-copper">Tapasya</span>
-        </a>
+        </Link>
         <h1 className="font-newsreader text-3xl italic font-bold text-on-surface">
           What skill do you want to master?
         </h1>
