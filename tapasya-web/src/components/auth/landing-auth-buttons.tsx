@@ -14,6 +14,10 @@ export default function LandingAuthButtons() {
   const [loading, setLoading] = useState<OAuthProvider | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // OAuth setup required - temporarily disabled for production
+  // See /work/OAUTH_SETUP_GUIDE.md for setup instructions
+  const ENABLE_OAUTH = false
+
   async function signInWithOAuth(provider: OAuthProvider) {
     setLoading(provider)
     setError(null)
@@ -37,46 +41,57 @@ export default function LandingAuthButtons() {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => signInWithOAuth('google')}
-        disabled={loading !== null}
-        className={cn(btnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}
-      >
-        {loading === 'google' ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <GoogleIcon />
-        )}
-        Continue with Google
-      </button>
+      {ENABLE_OAUTH && (
+        <>
+          <button
+            type="button"
+            onClick={() => signInWithOAuth('google')}
+            disabled={loading !== null}
+            className={cn(btnBase, 'bg-white text-neutral-800 hover:bg-neutral-100')}
+          >
+            {loading === 'google' ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <GoogleIcon />
+            )}
+            Continue with Google
+          </button>
 
-      <button
-        type="button"
-        onClick={() => signInWithOAuth('github')}
-        disabled={loading !== null}
-        className={cn(btnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}
-      >
-        {loading === 'github' ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <GitHubIcon />
-        )}
-        Continue with GitHub
-      </button>
+          <button
+            type="button"
+            onClick={() => signInWithOAuth('github')}
+            disabled={loading !== null}
+            className={cn(btnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}
+          >
+            {loading === 'github' ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <GitHubIcon />
+            )}
+            Continue with GitHub
+          </button>
 
-      <div className="flex items-center gap-4 py-1">
-        <div className="flex-1 h-px bg-surface-container-highest" />
-        <span className="text-xs uppercase tracking-widest text-on-surface-variant opacity-50 font-sans">or</span>
-        <div className="flex-1 h-px bg-surface-container-highest" />
-      </div>
+          <div className="flex items-center gap-4 py-1">
+            <div className="flex-1 h-px bg-surface-container-highest" />
+            <span className="text-xs uppercase tracking-widest text-on-surface-variant opacity-50 font-sans">or</span>
+            <div className="flex-1 h-px bg-surface-container-highest" />
+          </div>
+        </>
+      )}
 
       <Link
         href="/signup"
         className={cn(btnBase, 'bg-brand-copper text-white hover:bg-primary-container group')}
       >
-        Continue with Email
+        Get Started
         <span className="ml-auto text-white/60 group-hover:translate-x-0.5 transition-transform">→</span>
+      </Link>
+
+      <Link
+        href="/login"
+        className={cn(btnBase, 'bg-surface-container-highest text-on-surface border border-surface-container-highest hover:border-outline')}
+      >
+        Sign In
       </Link>
     </div>
   )

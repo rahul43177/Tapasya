@@ -12,22 +12,10 @@ export default function LogoutButton() {
 
   async function handleLogout() {
     setLoading(true)
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signOut()
-
-      if (error) {
-        console.error('Logout error:', error)
-        setLoading(false)
-        return
-      }
-
-      // Force a hard redirect to clear all client state
-      window.location.href = '/login'
-    } catch (error) {
-      console.error('Logout error:', error)
-      setLoading(false)
-    }
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
   }
 
   return (
