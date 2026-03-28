@@ -64,6 +64,9 @@ export async function getAuthenticatedUser(
       throw error
     }
 
+    // Fallback to getSession in local dev only when fetch fails
+    // This is safe because we already tried getUser() first
+    // The Supabase warning is expected here - we accept the tradeoff for local dev reliability
     const {
       data: { session },
     } = await supabase.auth.getSession()

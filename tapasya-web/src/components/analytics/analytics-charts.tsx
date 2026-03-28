@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
-import { format, subDays, startOfDay } from 'date-fns'
+import { format, subDays, startOfDay, startOfMonth, eachDayOfInterval, eachMonthOfInterval, getHours } from 'date-fns'
+import type { TimePeriod } from '@/lib/utils/analytics'
 
 interface Skill {
   id: string
@@ -25,24 +26,84 @@ interface Session {
 
 interface AnalyticsChartsProps {
   skills: Skill[]
-  weekSessions: Session[]
+  sessions: Session[]
   totalSessionMinutes: number
+  timePeriod: TimePeriod
 }
 
-export default function AnalyticsCharts({ skills, weekSessions, totalSessionMinutes }: AnalyticsChartsProps) {
-  // Build 7-day bar chart data
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = subDays(new Date(), 6 - i)
-    const dayStart = startOfDay(date).toISOString()
-    const dayEnd = startOfDay(subDays(date, -1)).toISOString()
-    const minutes = weekSessions
-      .filter(s => s.start_time >= dayStart && s.start_time < dayEnd)
-      .reduce((sum, s) => sum + (s.duration ?? 0), 0)
-    return {
-      day: format(date, 'EEE'),
-      hours: parseFloat((minutes / 60).toFixed(2)),
+export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes, timePeriod }: AnalyticsChartsProps) {
+  // Build bar chart data based on time period
+  let barChartData: { label: string; hours: number }[] = []
+  let periodLabel = ''
+  let avgDays = 7
+
+  if (timePeriod === 'today') {
+    // Show hours (24 bars)
+    periodLabel = 'Today'
+    avgDays = 1
+    barChartData = Array.from({ length: 24 }, (_, hour) => {
+      const minutes = sessions
+        .filter(s => getHours(new Date(s.start_time)) === hour)
+        .reduce((sum, s) => sum + (s.duration ?? 0), 0)
+      return {
+        label: format(new Date().setHours(hour, 0, 0, 0), 'ha'),
+        hours: parseFloat((minutes / 60).toFixed(2))
+      }
+    })
+  } else if (timePeriod === 'week') {
+    // Show days (7 bars)
+    periodLabel = 'This Week'
+    avgDays = 7
+    barChartData = Array.from({ length: 7 }, (_, i) => {
+      const date = subDays(new Date(), 6 - i)
+      const dayStart = startOfDay(date).toISOString()
+      const dayEnd = startOfDay(subDays(date, -1)).toISOString()
+      const minutes = sessions
+        .filter(s => s.start_time >= dayStart && s.start_time < dayEnd)
+        .reduce((sum, s) => sum + (s.duration ?? 0), 0)
+      return {
+        label: format(date, 'EEE'),
+        hours: parseFloat((minutes / 60).toFixed(2))
+      }
+    })
+  } else if (timePeriod === 'month') {
+    // Show days (30 bars) - aggregate into weeks for readability
+    periodLabel = 'This Month'
+    avgDays = 30
+    const monthStart = startOfMonth(new Date())
+    const days = eachDayOfInterval({ start: monthStart, end: new Date() })
+    barChartData = days.map(date => {
+      const dayStart = startOfDay(date).toISOString()
+      const dayEnd = startOfDay(subDays(date, -1)).toISOString()
+      const minutes = sessions
+        .filter(s => s.start_time >= dayStart && s.start_time < dayEnd)
+        .reduce((sum, s) => sum + (s.duration ?? 0), 0)
+      return {
+        label: format(date, 'd'),
+        hours: parseFloat((minutes / 60).toFixed(2))
+      }
+    })
+  } else {
+    // All time - show months
+    periodLabel = 'All Time'
+    avgDays = 365
+    if (sessions.length > 0) {
+      const firstSession = new Date(sessions[0].start_time)
+      const months = eachMonthOfInterval({ start: firstSession, end: new Date() })
+      barChartData = months.map(month => {
+        const monthStart = startOfMonth(month).toISOString()
+        const nextMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1)
+        const monthEnd = nextMonth.toISOString()
+        const minutes = sessions
+          .filter(s => s.start_time >= monthStart && s.start_time < monthEnd)
+          .reduce((sum, s) => sum + (s.duration ?? 0), 0)
+        return {
+          label: format(month, 'MMM'),
+          hours: parseFloat((minutes / 60).toFixed(2))
+        }
+      })
     }
-  })
+  }
 
   // Pie chart — hours per skill
   const pieData = skills.filter(s => s.total_hours > 0).map(s => ({
@@ -51,7 +112,7 @@ export default function AnalyticsCharts({ skills, weekSessions, totalSessionMinu
     color: s.color,
   }))
 
-  const weekTotal = last7Days.reduce((sum, d) => sum + d.hours, 0)
+  const periodTotal = barChartData.reduce((sum, d) => sum + d.hours, 0)
 
   return (
     <div className="space-y-6">
@@ -59,9 +120,9 @@ export default function AnalyticsCharts({ skills, weekSessions, totalSessionMinu
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-surface-container-highest">
         {[
           { label: 'Total Hours', value: (totalSessionMinutes / 60).toFixed(1) },
-          { label: 'This Week', value: weekTotal.toFixed(1) + 'h' },
+          { label: periodLabel, value: periodTotal.toFixed(1) + 'h' },
           { label: 'Active Skills', value: skills.length },
-          { label: 'Avg/Day (7d)', value: (weekTotal / 7).toFixed(1) + 'h' },
+          { label: `Avg/Day${timePeriod === 'week' ? ' (7d)' : ''}`, value: (periodTotal / avgDays).toFixed(1) + 'h' },
         ].map(({ label, value }) => (
           <div key={label} className="bg-surface-container px-6 py-5">
             <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-1">{label}</p>
@@ -71,17 +132,23 @@ export default function AnalyticsCharts({ skills, weekSessions, totalSessionMinu
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Week bar chart */}
+        {/* Period bar chart */}
         <div className="bg-surface-container border border-surface-container-highest p-6">
-          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-6">Hours This Week</p>
-          {weekTotal === 0 ? (
+          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-6">Hours {periodLabel}</p>
+          {periodTotal === 0 ? (
             <div className="h-48 flex items-center justify-center">
-              <p className="font-sans text-sm text-on-surface-variant">No sessions this week yet.</p>
+              <p className="font-sans text-sm text-on-surface-variant">No sessions in this period yet.</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={last7Days} barSize={24}>
-                <XAxis dataKey="day" tick={{ fill: '#e1c0b2', fontSize: 11, fontFamily: 'var(--font-sans-var)' }} axisLine={false} tickLine={false} />
+              <BarChart data={barChartData} barSize={timePeriod === 'today' ? 12 : 24}>
+                <XAxis
+                  dataKey="label"
+                  tick={{ fill: '#e1c0b2', fontSize: 11, fontFamily: 'var(--font-sans-var)' }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={timePeriod === 'today' ? 2 : timePeriod === 'month' ? 2 : 0}
+                />
                 <YAxis tick={{ fill: '#e1c0b2', fontSize: 11, fontFamily: 'var(--font-mono-var)' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}h`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#201f1f', border: '1px solid #353434', borderRadius: 0, fontFamily: 'var(--font-sans-var)', fontSize: 12 }}
