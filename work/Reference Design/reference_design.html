@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapasya — The Ancient Practice of Becoming Great</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --saffron: #E05C00;
+      --saffron-glow: #FF7A1A;
+      --indigo: #3730A3;
+      --indigo-light: #5B54D4;
+      --teal: #0F766E;
+      --teal-light: #14B8A6;
+      --bg-dark: #0A0A0F;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-glass: rgba(255,255,255,0.06);
+      --text-primary: #F5F0EB;
+      --text-secondary: rgba(245,240,235,0.55);
+      --text-muted: rgba(245,240,235,0.3);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-dark);
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-dark);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    canvas#fireCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    .scroll-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(10,10,15,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .nav-logo span {
+      color: var(--saffron);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 100px;
+      transition: color 0.3s;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-link:hover { color: var(--text-primary); }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--text-primary);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(224,92,0,0.2);
+    }
+
+    .nav-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-primary);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s;
+    }
+
+    .nav-menu-btn:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .menu-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .menu-dots span {
+      width: 4px; height: 4px;
+      background: var(--text-primary);
+      border-radius: 50%;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      flex: 0 0 42%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 48px 0 48px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-tagline em {
+      font-style: italic;
+      color: var(--saffron);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 380px;
+      font-weight: 300;
+    }
+
+    .hero-right {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #heroCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .scroll-indicator .crosses {
+      display: flex;
+      gap: clamp(80px, 20vw, 300px);
+    }
+
+    .scroll-indicator .cross {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    .scroll-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      min-height: 100vh;
+      padding: 120px 48px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--saffron);
+      font-weight: 600;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      line-height: 1.7;
+      font-weight: 300;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s;
+    }
+
+    .section.visible .section-label,
+    .section.visible .section-title,
+    .section.visible .section-desc {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── PROGRESS RING SECTION ── */
+    .progress-section {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .progress-text { flex: 1; }
+
+    .progress-visual {
+      flex: 0 0 380px;
+      height: 380px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
+    }
+
+    .section.visible .progress-visual {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .ring-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+    }
+
+    .ring-container svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.05);
+      stroke-width: 6;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke: url(#ringGradient);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 816.81;
+      stroke-dashoffset: 816.81;
+      transition: stroke-dashoffset 2s cubic-bezier(0.16,1,0.3,1);
+      filter: drop-shadow(0 0 12px rgba(224,92,0,0.4));
+    }
+
+    .ring-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .ring-hours {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ring-total {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    .ring-label-text {
+      font-size: 12px;
+      color: var(--saffron);
+      margin-top: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* ── STOPWATCH SECTION ── */
+    .stopwatch-section {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      flex-direction: row-reverse;
+    }
+
+    .stopwatch-visual {
+      flex: 0 0 360px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
+    }
+
+    .section.visible .stopwatch-visual {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .stopwatch-glass {
+      width: 260px;
+      height: 320px;
+      background: var(--bg-glass);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 32px;
+      backdrop-filter: blur(30px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .stopwatch-glass::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    }
+
+    .sw-icon {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--teal-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .sw-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 2px;
+      height: 12px;
+      background: var(--teal-light);
+      transform-origin: bottom center;
+      transform: translate(-50%, -100%);
+      animation: tickSw 4s linear infinite;
+    }
+
+    @keyframes tickSw {
+      from { transform: translate(-50%, -100%) rotate(0deg); }
+      to { transform: translate(-50%, -100%) rotate(360deg); }
+    }
+
+    .sw-time {
+      font-size: 42px;
+      font-weight: 300;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+    }
+
+    .sw-label {
+      font-size: 12px;
+      color: var(--teal-light);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .sw-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--teal-light);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 20px var(--teal-light);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* ── STREAK SECTION ── */
+    .streak-section {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .streak-visual {
+      flex: 0 0 400px;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
+    }
+
+    .section.visible .streak-visual {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .streak-card {
+      width: 340px;
+      padding: 48px 40px;
+      background: var(--bg-glass);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+
+    .streak-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(224,92,0,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .streak-fire {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(224,92,0,0.5));
+      animation: fireFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes fireFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.05); }
+    }
+
+    .streak-count {
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--saffron-glow);
+      line-height: 1;
+      text-shadow: 0 0 40px rgba(224,92,0,0.4);
+    }
+
+    .streak-count-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    .streak-bar-container {
+      margin-top: 28px;
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .streak-day {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.06);
+      transition: all 0.4s;
+    }
+
+    .streak-day.active {
+      background: var(--saffron);
+      box-shadow: 0 0 10px rgba(224,92,0,0.4);
+    }
+
+    .streak-day.today {
+      background: var(--saffron-glow);
+      box-shadow: 0 0 16px rgba(255,122,26,0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* ── SKILLS SECTION ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
+    }
+
+    .section.visible .skills-grid {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .skill-card {
+      background: var(--bg-glass);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      padding: 36px 32px;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .skill-card:nth-child(1)::before { background: radial-gradient(ellipse at 50% 0%, rgba(224,92,0,0.1) 0%, transparent 70%); }
+    .skill-card:nth-child(2)::before { background: radial-gradient(ellipse at 50% 0%, rgba(55,48,163,0.15) 0%, transparent 70%); }
+    .skill-card:nth-child(3)::before { background: radial-gradient(ellipse at 50% 0%, rgba(15,118,110,0.15) 0%, transparent 70%); }
+
+    .skill-card:hover::before { opacity: 1; }
+
+    .skill-card:hover {
+      transform: translateY(-8px) rotateX(2deg);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+
+    .skill-emoji {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .skill-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .skill-hours {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .skill-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.8s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .skill-card:nth-child(1) .skill-bar-fill { background: var(--saffron); box-shadow: 0 0 10px rgba(224,92,0,0.3); }
+    .skill-card:nth-child(2) .skill-bar-fill { background: var(--indigo-light); box-shadow: 0 0 10px rgba(91,84,212,0.3); }
+    .skill-card:nth-child(3) .skill-bar-fill { background: var(--teal-light); box-shadow: 0 0 10px rgba(20,184,166,0.3); }
+
+    /* ── LEADERBOARD ── */
+    .leaderboard-section {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      flex-direction: row-reverse;
+    }
+
+    .leaderboard-visual {
+      flex: 0 0 400px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
+    }
+
+    .section.visible .leaderboard-visual {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .lb-panel {
+      background: var(--bg-glass);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+
+    .lb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .lb-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .lb-badge {
+      font-size: 11px;
+      padding: 4px 12px;
+      background: rgba(224,92,0,0.15);
+      color: var(--saffron-glow);
+      border-radius: 100px;
+      font-weight: 600;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: all 0.3s;
+    }
+
+    .lb-row:last-child { border-bottom: none; }
+
+    .lb-row:hover {
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      padding-left: 12px;
+      margin-left: -12px;
+      margin-right: -12px;
+      padding-right: 12px;
+    }
+
+    .lb-rank {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .lb-rank.gold { background: rgba(224,92,0,0.2); color: var(--saffron-glow); }
+    .lb-rank.silver { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+    .lb-rank.bronze { background: rgba(15,118,110,0.2); color: var(--teal-light); }
+    .lb-rank.normal { background: rgba(255,255,255,0.04); color: var(--text-muted); }
+
+    .lb-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .lb-info { flex: 1; }
+
+    .lb-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .lb-skill {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .lb-hrs {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lb-hrs span {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 48px;
+      position: relative;
+    }
+
+    .cta-content {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .cta-section.visible .cta-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 400;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .cta-title em {
+      font-style: italic;
+      color: var(--saffron);
+    }
+
+    .cta-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 40px;
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.3px;
+      box-shadow: 0 0 40px rgba(224,92,0,0.3);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(224,92,0,0.5);
+    }
+
+    .cta-btn svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s;
+    }
+
+    .cta-btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 48px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    footer p span {
+      color: var(--saffron);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-link { display: none; }
+      .hero { flex-direction: column; }
+      .hero-left { flex: none; padding: 120px 24px 32px; text-align: center; }
+      .hero-sub { margin: 0 auto; }
+      .hero-right { height: 50vh; }
+      .section { padding: 80px 24px; }
+      .progress-section,
+      .stopwatch-section,
+      .streak-section,
+      .leaderboard-section {
+        flex-direction: column;
+        gap: 48px;
+        text-align: center;
+      }
+      .section-desc { margin: 0 auto; }
+      .progress-visual,
+      .stopwatch-visual,
+      .streak-visual,
+      .leaderboard-visual { flex: none; }
+      .skills-grid { grid-template-columns: 1fr; max-width: 360px; margin: 48px auto 0; }
+      .ring-container { width: 240px; height: 240px; }
+      .scroll-indicator { display: none; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .stopwatch-glass { width: 220px; height: 280px; padding: 32px; }
+      .sw-time { font-size: 32px; }
+      .streak-card { width: 280px; padding: 36px 28px; }
+      .streak-count { font-size: 48px; }
+      .lb-panel { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="fireCanvas"></canvas>
+
+<div class="scroll-container">
+
+  <!-- NAV -->
+  <nav id="mainNav">
+    <div class="nav-logo">Tapas<span>y</span>a</div>
+    <div class="nav-right">
+      <a href="#" class="nav-link">Philosophy</a>
+      <a href="#" class="nav-link">Practice</a>
+      <button class="nav-btn">Begin Practice →</button>
+      <button class="nav-menu-btn">Menu <span class="menu-dots"><span></span><span></span></span></button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <h1 class="hero-tagline">The ancient practice of <em>becoming great</em></h1>
+      <p class="hero-sub">Track every hour. Build mastery. Transform discipline into an art form — one deliberate session at a time.</p>
+    </div>
+    <div class="hero-right">
+      <canvas id="heroCanvas"></canvas>
+    </div>
+    <div class="scroll-indicator">
+      <div class="crosses">
+        <span class="cross">+</span>
+        <span class="scroll-label">Scroll to explore</span>
+        <span class="cross">+</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS RING -->
+  <section class="section" id="sectionProgress">
+    <div class="section-inner">
+      <div class="progress-section">
+        <div class="progress-text">
+          <p class="section-label">Deep Hours</p>
+          <h2 class="section-title">Your path to<br>10,000 hours</h2>
+          <p class="section-desc">Every master was once a beginner. The ring fills slowly, honestly — a quiet witness to your dedication. No shortcuts. No pretending.</p>
+        </div>
+        <div class="progress-visual">
+          <div class="ring-container">
+            <svg viewBox="0 0 280 280">
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#E05C00"/>
+                  <stop offset="100%" style="stop-color:#FF7A1A"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="140" cy="140" r="130"/>
+              <circle class="ring-progress" id="ringProgress" cx="140" cy="140" r="130"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-hours" id="ringHours">0</div>
+              <div class="ring-total">of 10,000 hrs</div>
+              <div class="ring-label-text">Mastery</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STOPWATCH -->
+  <section class="section" id="sectionStopwatch">
+    <div class="section-inner">
+      <div class="stopwatch-section">
+        <div class="progress-text">
+          <p class="section-label">Deep Focus</p>
+          <h2 class="section-title">One session.<br>Full presence.</h2>
+          <p class="section-desc">The glass timer holds your attention like a meditation bell. Start. Focus. The world fades. Only the craft remains.</p>
+        </div>
+        <div class="stopwatch-visual">
+          <div class="stopwatch-glass">
+            <div class="sw-icon"></div>
+            <div class="sw-time" id="swTime">01:24:08</div>
+            <div class="sw-label">Session Active</div>
+            <div class="sw-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STREAK -->
+  <section class="section" id="sectionStreak">
+    <div class="section-inner">
+      <div class="streak-section">
+        <div class="progress-text">
+          <p class="section-label">Consistency</p>
+          <h2 class="section-title">The flame grows<br>with discipline</h2>
+          <p class="section-desc">Each unbroken day feeds the fire. Miss one, and you feel it — not as punishment, but as a quiet reminder of who you're becoming.</p>
+        </div>
+        <div class="streak-visual">
+          <div class="streak-card">
+            <div class="streak-fire">🔥</div>
+            <div class="streak-count" id="streakCount">0</div>
+            <div class="streak-count-label">day streak</div>
+            <div class="streak-bar-container" id="streakBars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section" id="sectionSkills">
+    <div class="section-inner">
+      <p class="section-label">Your Crafts</p>
+      <h2 class="section-title">Master many things.<br>One hour at a time.</h2>
+      <p class="section-desc">Each skill card is a world — alive with progress, glowing with potential.</p>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-emoji">⌨️</div>
+          <div class="skill-name">Coding</div>
+          <div class="skill-hours">847 hours logged</div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="8.47"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-emoji">🏋️</div>
+          <div class="skill-name">Gym</div>
+          <div class="skill-hours">412 hours logged</div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="4.12"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-emoji">🎸</div>
+          <div class="skill-name">Guitar</div>
+          <div class="skill-hours">203 hours logged</div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="2.03"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section class="section" id="sectionLeaderboard">
+    <div class="section-inner">
+      <div class="leaderboard-section">
+        <div class="progress-text">
+          <p class="section-label">Community</p>
+          <h2 class="section-title">Walk alongside<br>the devoted</h2>
+          <p class="section-desc">Not competition — companionship. See who else is on the path. Draw strength from their consistency, and let yours inspire them.</p>
+        </div>
+        <div class="leaderboard-visual">
+          <div class="lb-panel">
+            <div class="lb-header">
+              <div class="lb-title">This Week</div>
+              <div class="lb-badge">Live</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank gold">1</div>
+              <div class="lb-avatar" style="background:rgba(224,92,0,0.15)">🧘</div>
+              <div class="lb-info"><div class="lb-name">Arjun M.</div><div class="lb-skill">Coding · Guitar</div></div>
+              <div class="lb-hrs">42.5 <span>hrs</span></div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank silver">2</div>
+              <div class="lb-avatar" style="background:rgba(91,84,212,0.15)">🎯</div>
+              <div class="lb-info"><div class="lb-name">Priya K.</div><div class="lb-skill">Design · Yoga</div></div>
+              <div class="lb-hrs">38.2 <span>hrs</span></div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank bronze">3</div>
+              <div class="lb-avatar" style="background:rgba(15,118,110,0.15)">📚</div>
+              <div class="lb-info"><div class="lb-name">Dev S.</div><div class="lb-skill">Writing · Gym</div></div>
+              <div class="lb-hrs">34.8 <span>hrs</span></div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank normal">4</div>
+              <div class="lb-avatar" style="background:rgba(255,255,255,0.06)">🎹</div>
+              <div class="lb-info"><div class="lb-name">Meera R.</div><div class="lb-skill">Piano · Meditation</div></div>
+              <div class="lb-hrs">29.1 <span>hrs</span></div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank normal">5</div>
+              <div class="lb-avatar" style="background:rgba(255,255,255,0.06)">⚡</div>
+              <div class="lb-info"><div class="lb-name">You</div><div class="lb-skill">Coding · Gym · Guitar</div></div>
+              <div class="lb-hrs">24.0 <span>hrs</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section section" id="sectionCTA">
+    <div class="cta-content">
+      <h2 class="cta-title">Your fire is waiting.<br><em>Begin the practice.</em></h2>
+      <p class="cta-sub">Join thousands who chose mastery over mediocrity.</p>
+      <button class="cta-btn">
+        Start Your Tapasya
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Tapasya — Built with <span>🔥</span> discipline</p>
+    <p>The path to mastery has no shortcuts.</p>
+  </footer>
+
+</div>
+
+<script>
+// ============================================================
+//  FLUID FIRE BACKGROUND (from reference)
+// ============================================================
+
+const canvas = document.getElementById('fireCanvas');
+const gl = canvas.getContext('webgl2', {
+  alpha: true,
+  depth: false,
+  stencil: false,
+  antialias: false
+});
+
+let fireEnabled = true;
+
+if (!gl) {
+  fireEnabled = false;
+} else {
+  gl.getExtension('EXT_color_buffer_float');
+  gl.getExtension('OES_texture_float_linear');
+
+  const RGBA = gl.RGBA16F;
+  const RG   = gl.RG16F;
+  const R    = gl.R16F;
+  const HF   = gl.HALF_FLOAT;
+  const LIN  = gl.LINEAR;
+  const NEAR = gl.NEAREST;
+
+  const fConfig = {
+    simRes:     128,
+    dyeRes:     512,
+    densDiss:   3.2,
+    velDiss:    1.6,
+    pressure:   0.8,
+    pIter:      20,
+    curl:       18,
+    splatR:     0.002,
+    bloomRes:   128,
+    bloomIter:  6,
+    bloomInt:   0.25,
+    bloomTh:    0.6,
+    bloomKnee:  0.7,
+    sunRes:     128,
+    sunW:       0.8
+  };
+
+  function getResolution(base) {
+    let aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
+    if (aspect < 1) aspect = 1 / aspect;
+    const min = Math.round(base);
+    const max = Math.round(base * aspect);
+    return gl.drawingBufferWidth > gl.drawingBufferHeight
+      ? { w: max, h: min }
+      : { w: min, h: max };
+  }
+
+  function makeShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
+  }
+
+  function makeProgram(vertexShader, fragmentShader) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    const uniforms = {};
+    const count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < count; i++) {
+      const name = gl.getActiveUniform(program, i).name;
+      uniforms[name] = gl.getUniformLocation(program, name);
+    }
+    return { p: program, u: uniforms, bind() { gl.useProgram(program); } };
+  }
+
+  const baseVertexSource = `#version 300 es
+precision highp float;
+in vec2 aPosition;
+out vec2 vUv, vL, vR, vT, vB;
+uniform vec2 texelSize;
+void main() {
+  vUv = aPosition * 0.5 + 0.5;
+  vL = vUv - vec2(texelSize.x, 0.0);
+  vR = vUv + vec2(texelSize.x, 0.0);
+  vT = vUv + vec2(0.0, texelSize.y);
+  vB = vUv - vec2(0.0, texelSize.y);
+  gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+  const blurVertexSource = `#version 300 es
+precision highp float;
+in vec2 aPosition;
+out vec2 vUv, vL, vR;
+uniform vec2 texelSize;
+void main() {
+  vUv = aPosition * 0.5 + 0.5;
+  float offset = 1.333333;
+  vL = vUv - texelSize * offset;
+  vR = vUv + texelSize * offset;
+  gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+  const baseVertex = makeShader(gl.VERTEX_SHADER, baseVertexSource);
+  const blurVertex = makeShader(gl.VERTEX_SHADER, blurVertexSource);
+
+  function fragProgram(source) { return makeProgram(baseVertex, makeShader(gl.FRAGMENT_SHADER, source)); }
+  function blurProgramF(source) { return makeProgram(blurVertex, makeShader(gl.FRAGMENT_SHADER, source)); }
+
+  const HP = `#version 300 es\nprecision highp float;\nprecision highp sampler2D;\n`;
+  const MP = `#version 300 es\nprecision mediump float;\nprecision mediump sampler2D;\n`;
+
+  const blurProg = blurProgramF(MP + `
+in vec2 vUv, vL, vR;
+uniform sampler2D uTexture;
+out vec4 fragColor;
+void main() {
+  fragColor = texture(uTexture, vUv) * 0.29411764
+            + texture(uTexture, vL)  * 0.35294117
+            + texture(uTexture, vR)  * 0.35294117;
+}`);
+
+  const copyProg = fragProgram(MP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+out vec4 fragColor;
+void main() { fragColor = texture(uTexture, vUv); }`);
+
+  const clearProg = fragProgram(MP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+uniform float value;
+out vec4 fragColor;
+void main() { fragColor = value * texture(uTexture, vUv); }`);
+
+  const displayProg = fragProgram(HP + `
+in vec2 vUv;
+uniform sampler2D uTexture, uBloom, uSunrays;
+uniform vec2 texelSize;
+out vec4 fragColor;
+void main() {
+  vec3 color = texture(uTexture, vUv).rgb;
+  color += texture(uBloom, vUv).rgb * ${fConfig.bloomInt};
+  color *= texture(uSunrays, vUv).r;
+  vec3 bg = vec3(0.039, 0.039, 0.059);
+  float alpha = max(color.r, max(color.g, color.b));
+  color = mix(bg, color + bg, clamp(alpha * 3.0, 0.0, 1.0));
+  fragColor = vec4(color, 1.0);
+}`);
+
+  const splatProg = fragProgram(HP + `
+in vec2 vUv;
+uniform sampler2D uTarget;
+uniform float aspectRatio;
+uniform vec3 color;
+uniform vec2 point;
+uniform float radius;
+out vec4 fragColor;
+void main() {
+  vec2 p = vUv - point;
+  p.x *= aspectRatio;
+  vec3 existing = texture(uTarget, vUv).xyz;
+  fragColor = vec4(existing + exp(-dot(p, p) / radius) * color, 1.0);
+}`);
+
+  const advectProg = fragProgram(HP + `
+in vec2 vUv;
+uniform sampler2D uVelocity, uSource;
+uniform vec2 texelSize, dyeTexelSize;
+uniform float dt, dissipation, enableSmoke;
+out vec4 fragColor;
+void main() {
+  vec2 coord = vUv - dt * texture(uVelocity, vUv).xy * texelSize;
+  vec4 result = texture(uSource, coord) / (1.0 + dissipation * dt);
+  if (enableSmoke > 0.5) {
+    float intensity = max(result.r, max(result.g, result.b));
+    if (intensity > 0.001) {
+      vec3 fireColor;
+      if (intensity > 0.09) {
+        float t = smoothstep(0.09, 0.18, intensity);
+        fireColor = mix(vec3(1.0, 0.55, 0.0), vec3(1.0, 0.85, 0.6), t);
+      } else if (intensity > 0.03) {
+        float t = smoothstep(0.03, 0.09, intensity);
+        fireColor = mix(vec3(0.85, 0.15, 0.0), vec3(1.0, 0.45, 0.0), t);
+      } else {
+        float t = smoothstep(0.001, 0.03, intensity);
+        fireColor = mix(vec3(0.04, 0.01, 0.01), vec3(0.55, 0.08, 0.01), t);
+      }
+      vec3 raw = texture(uSource, coord).rgb / (1.0 + dissipation * dt);
+      float maxComp = max(max(fireColor.r, fireColor.g), fireColor.b);
+      result.rgb = mix(raw, fireColor * intensity / maxComp, 0.9);
+    }
+  }
+  fragColor = result;
+}`);
+
+  const divergenceProg = fragProgram(MP + `
+in vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uVelocity;
+out vec4 fragColor;
+void main() {
+  float L = texture(uVelocity, vL).x;
+  float R = texture(uVelocity, vR).x;
+  float T = texture(uVelocity, vT).y;
+  float B = texture(uVelocity, vB).y;
+  vec2  C = texture(uVelocity, vUv).xy;
+  if (vL.x < 0.0) L = -C.x;
+  if (vR.x > 1.0) R = -C.x;
+  if (vT.y > 1.0) T = -C.y;
+  if (vB.y < 0.0) B = -C.y;
+  fragColor = vec4(0.5 * (R - L + T - B), 0.0, 0.0, 1.0);
+}`);
+
+  const curlProg = fragProgram(MP + `
+in vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uVelocity;
+out vec4 fragColor;
+void main() {
+  float curl = 0.5 * (
+    texture(uVelocity, vR).y - texture(uVelocity, vL).y -
+    texture(uVelocity, vT).x + texture(uVelocity, vB).x
+  );
+  fragColor = vec4(curl, 0.0, 0.0, 1.0);
+}`);
+
+  const vorticityProg = fragProgram(HP + `
+in vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uVelocity, uCurl;
+uniform float curl, dt;
+out vec4 fragColor;
+void main() {
+  float cL = texture(uCurl, vL).x;
+  float cR = texture(uCurl, vR).x;
+  float cT = texture(uCurl, vT).x;
+  float cB = texture(uCurl, vB).x;
+  float cC = texture(uCurl, vUv).x;
+  vec2 force = 0.5 * vec2(abs(cT) - abs(cB), abs(cR) - abs(cL));
+  force /= length(force) + 1e-4;
+  force *= curl * cC;
+  force.y *= -1.0;
+  vec2 vel = texture(uVelocity, vUv).xy;
+  fragColor = vec4(vel + force * dt, 0.0, 1.0);
+}`);
+
+  const pressureProg = fragProgram(MP + `
+in vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uPressure, uDivergence;
+out vec4 fragColor;
+void main() {
+  float pL = texture(uPressure, vL).x;
+  float pR = texture(uPressure, vR).x;
+  float pT = texture(uPressure, vT).x;
+  float pB = texture(uPressure, vB).x;
+  float div = texture(uDivergence, vUv).x;
+  fragColor = vec4(0.25 * (pL + pR + pB + pT - div), 0.0, 0.0, 1.0);
+}`);
+
+  const gradientProg = fragProgram(MP + `
+in vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uPressure, uVelocity;
+out vec4 fragColor;
+void main() {
+  float pR = texture(uPressure, vR).x;
+  float pL = texture(uPressure, vL).x;
+  float pT = texture(uPressure, vT).x;
+  float pB = texture(uPressure, vB).x;
+  vec2 vel = texture(uVelocity, vUv).xy;
+  fragColor = vec4(vel - vec2(pR - pL, pT - pB), 0.0, 1.0);
+}`);
+
+  const bloomPreProg = fragProgram(MP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+uniform vec3 curve;
+uniform float threshold;
+out vec4 fragColor;
+void main() {
+  vec3 c = texture(uTexture, vUv).rgb;
+  float brightness = max(c.r, max(c.g, c.b));
+  float rq = clamp(brightness - curve.x, 0.0, curve.y);
+  rq = curve.z * rq * rq;
+  c *= max(rq, brightness - threshold) / max(brightness, 1e-4);
+  fragColor = vec4(c, 0.0);
+}`);
+
+  const bloomFinalProg = fragProgram(MP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+uniform float intensity;
+out vec4 fragColor;
+void main() { fragColor = intensity * texture(uTexture, vUv); }`);
+
+  const sunMaskProg = fragProgram(HP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+out vec4 fragColor;
+void main() {
+  vec4 c = texture(uTexture, vUv);
+  float brightness = max(c.r, max(c.g, c.b));
+  c.a = 1.0 - min(max(brightness * 20.0, 0.0), 0.8);
+  fragColor = c;
+}`);
+
+  const sunraysProg = fragProgram(HP + `
+in vec2 vUv;
+uniform sampler2D uTexture;
+uniform float weight;
+out vec4 fragColor;
+void main() {
+  vec2 coord = vUv;
+  vec2 dir = (vUv - 0.5) * 0.01875;
+  float illumination = 1.0;
+  float accumulated = texture(uTexture, vUv).a;
+  for (int i = 0; i < 16; i++) {
+    coord -= dir;
+    accumulated += texture(uTexture, coord).a * illumination * weight;
+    illumination *= 0.95;
+  }
+  fragColor = vec4(accumulated * 0.7, 0.0, 0.0, 1.0);
+}`);
+
+  const quadBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,-1,1,1,1,1,-1]), gl.STATIC_DRAW);
+  const indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2,0,2,3]), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(0);
+
+  function blit(target) {
+    if (!target) {
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    } else {
+      gl.viewport(0, 0, target.width, target.height);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
+    }
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+  }
+
+  function createFBO(w, h, internalFormat, format, type, filtering) {
+    gl.activeTexture(gl.TEXTURE0);
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filtering);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filtering);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, w, h, 0, format, type, null);
+    const fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.viewport(0, 0, w, h);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    return {
+      texture, fbo, width: w, height: h,
+      texelSizeX: 1/w, texelSizeY: 1/h,
+      attach(id) { gl.activeTexture(gl.TEXTURE0+id); gl.bindTexture(gl.TEXTURE_2D, texture); return id; }
+    };
+  }
+
+  function createDoubleFBO(w, h, internalFormat, format, type, filtering) {
+    let fboA = createFBO(w, h, internalFormat, format, type, filtering);
+    let fboB = createFBO(w, h, internalFormat, format, type, filtering);
+    return {
+      width: w, height: h,
+      texelSizeX: fboA.texelSizeX, texelSizeY: fboA.texelSizeY,
+      get read() { return fboA; }, set read(v) { fboA = v; },
+      get write() { return fboB; }, set write(v) { fboB = v; },
+      swap() { const tmp = fboA; fboA = fboB; fboB = tmp; }
+    };
+  }
+
+  function resizeFBO(source, w, h, internalFormat, format, type, filtering) {
+    const target = createFBO(w, h, internalFormat, format, type, filtering);
+    copyProg.bind();
+    gl.uniform1i(copyProg.u.uTexture, source.attach(0));
+    blit(target);
+    return target;
+  }
+
+  function resizeDoubleFBO(doubleFbo, w, h, internalFormat, format, type, filtering) {
+    if (doubleFbo.width === w && doubleFbo.height === h) return doubleFbo;
+    doubleFbo.read = resizeFBO(doubleFbo.read, w, h, internalFormat, format, type, filtering);
+    doubleFbo.write = createFBO(w, h, internalFormat, format, type, filtering);
+    doubleFbo.width = w; doubleFbo.height = h;
+    doubleFbo.texelSizeX = 1/w; doubleFbo.texelSizeY = 1/h;
+    return doubleFbo;
+  }
+
+  let dye, vel, div, crl, pres;
+  let bloomFBO, bloomMips = [];
+  let sunraysFBO, sunraysTempFBO;
+
+  function initFBOs() {
+    const simSize = getResolution(fConfig.simRes);
+    const dyeSize = getResolution(fConfig.dyeRes);
+    gl.disable(gl.BLEND);
+    dye = dye ? resizeDoubleFBO(dye, dyeSize.w, dyeSize.h, RGBA, gl.RGBA, HF, LIN) : createDoubleFBO(dyeSize.w, dyeSize.h, RGBA, gl.RGBA, HF, LIN);
+    vel = vel ? resizeDoubleFBO(vel, simSize.w, simSize.h, RG, gl.RG, HF, LIN) : createDoubleFBO(simSize.w, simSize.h, RG, gl.RG, HF, LIN);
+    div = createFBO(simSize.w, simSize.h, R, gl.RED, HF, NEAR);
+    crl = createFBO(simSize.w, simSize.h, R, gl.RED, HF, NEAR);
+    pres = createDoubleFBO(simSize.w, simSize.h, R, gl.RED, HF, NEAR);
+    const bloomSize = getResolution(fConfig.bloomRes);
+    bloomFBO = createFBO(bloomSize.w, bloomSize.h, RGBA, gl.RGBA, HF, LIN);
+    bloomMips = [];
+    for (let i = 0; i < fConfig.bloomIter; i++) {
+      const w = bloomSize.w >> (i+1), h = bloomSize.h >> (i+1);
+      if (w < 2 || h < 2) break;
+      bloomMips.push(createFBO(w, h, RGBA, gl.RGBA, HF, LIN));
+    }
+    const sunSize = getResolution(fConfig.sunRes);
+    sunraysFBO = createFBO(sunSize.w, sunSize.h, R, gl.RED, HF, LIN);
+    sunraysTempFBO = createFBO(sunSize.w, sunSize.h, R, gl.RED, HF, LIN);
+  }
+
+  function splat(x, y, dx, dy, color) {
+    splatProg.bind();
+    const aspect = canvas.width / canvas.height;
+    const radius = fConfig.splatR * (aspect > 1 ? aspect : 1);
+    gl.uniform1i(splatProg.u.uTarget, vel.read.attach(0));
+    gl.uniform1f(splatProg.u.aspectRatio, aspect);
+    gl.uniform2f(splatProg.u.point, x, y);
+    gl.uniform3f(splatProg.u.color, dx, dy, 0);
+    gl.uniform1f(splatProg.u.radius, radius);
+    blit(vel.write); vel.swap();
+    gl.uniform1i(splatProg.u.uTarget, dye.read.attach(0));
+    gl.uniform3f(splatProg.u.color, color.r, color.g, color.b);
+    blit(dye.write); dye.swap();
+  }
+
+  function applyBloom(source, destination) {
+    if (bloomMips.length < 2) return;
+    let lastFBO = destination;
+    gl.disable(gl.BLEND);
+    bloomPreProg.bind();
+    const knee = fConfig.bloomTh * fConfig.bloomKnee + 1e-4;
+    gl.uniform3f(bloomPreProg.u.curve, fConfig.bloomTh - knee, knee*2, 0.25/knee);
+    gl.uniform1f(bloomPreProg.u.threshold, fConfig.bloomTh);
+    gl.uniform1i(bloomPreProg.u.uTexture, source.attach(0));
+    blit(lastFBO);
+    blurProg.bind();
+    for (let i = 0; i < bloomMips.length; i++) {
+      const mip = bloomMips[i];
+      gl.uniform2f(blurProg.u.texelSize, lastFBO.texelSizeX, 0);
+      gl.uniform1i(blurProg.u.uTexture, lastFBO.attach(0));
+      blit(mip);
+      gl.uniform2f(blurProg.u.texelSize, 0, mip.texelSizeY);
+      gl.uniform1i(blurProg.u.uTexture, mip.attach(0));
+      blit(lastFBO);
+      lastFBO = mip;
+    }
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    blurProg.bind();
+    for (let i = bloomMips.length - 2; i >= 0; i--) {
+      const target = bloomMips[i];
+      gl.uniform2f(blurProg.u.texelSize, target.texelSizeX, 0);
+      gl.uniform1i(blurProg.u.uTexture, lastFBO.attach(0));
+      gl.viewport(0, 0, target.width, target.height);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+      gl.uniform2f(blurProg.u.texelSize, 0, target.texelSizeY);
+      gl.uniform1i(blurProg.u.uTexture, target.attach(0));
+      blit(target);
+      lastFBO = target;
+    }
+    gl.disable(gl.BLEND);
+    bloomFinalProg.bind();
+    gl.uniform1i(bloomFinalProg.u.uTexture, lastFBO.attach(0));
+    gl.uniform1f(bloomFinalProg.u.intensity, fConfig.bloomInt);
+    blit(destination);
+  }
+
+  function applySunrays(source, maskFBO, destination) {
+    gl.disable(gl.BLEND);
+    sunMaskProg.bind();
+    gl.uniform1i(sunMaskProg.u.uTexture, source.attach(0));
+    blit(maskFBO);
+    sunraysProg.bind();
+    gl.uniform1f(sunraysProg.u.weight, fConfig.sunW);
+    gl.uniform1i(sunraysProg.u.uTexture, maskFBO.attach(0));
+    blit(destination);
+  }
+
+  function simulationStep(dt) {
+    gl.disable(gl.BLEND);
+    curlProg.bind();
+    gl.uniform2f(curlProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    gl.uniform1i(curlProg.u.uVelocity, vel.read.attach(0));
+    blit(crl);
+    vorticityProg.bind();
+    gl.uniform2f(vorticityProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    gl.uniform1i(vorticityProg.u.uVelocity, vel.read.attach(0));
+    gl.uniform1i(vorticityProg.u.uCurl, crl.attach(1));
+    gl.uniform1f(vorticityProg.u.curl, fConfig.curl);
+    gl.uniform1f(vorticityProg.u.dt, dt);
+    blit(vel.write); vel.swap();
+    divergenceProg.bind();
+    gl.uniform2f(divergenceProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    gl.uniform1i(divergenceProg.u.uVelocity, vel.read.attach(0));
+    blit(div);
+    clearProg.bind();
+    gl.uniform1i(clearProg.u.uTexture, pres.read.attach(0));
+    gl.uniform1f(clearProg.u.value, fConfig.pressure);
+    blit(pres.write); pres.swap();
+    pressureProg.bind();
+    gl.uniform2f(pressureProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    gl.uniform1i(pressureProg.u.uDivergence, div.attach(0));
+    for (let i = 0; i < fConfig.pIter; i++) {
+      gl.uniform1i(pressureProg.u.uPressure, pres.read.attach(1));
+      blit(pres.write); pres.swap();
+    }
+    gradientProg.bind();
+    gl.uniform2f(gradientProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    gl.uniform1i(gradientProg.u.uPressure, pres.read.attach(0));
+    gl.uniform1i(gradientProg.u.uVelocity, vel.read.attach(1));
+    blit(vel.write); vel.swap();
+    advectProg.bind();
+    gl.uniform2f(advectProg.u.texelSize, vel.texelSizeX, vel.texelSizeY);
+    const velAttach = vel.read.attach(0);
+    gl.uniform1i(advectProg.u.uVelocity, velAttach);
+    gl.uniform1i(advectProg.u.uSource, velAttach);
+    gl.uniform1f(advectProg.u.dt, dt);
+    gl.uniform1f(advectProg.u.dissipation, fConfig.velDiss);
+    gl.uniform1f(advectProg.u.enableSmoke, 0);
+    blit(vel.write); vel.swap();
+    gl.uniform2f(advectProg.u.dyeTexelSize, dye.texelSizeX, dye.texelSizeY);
+    gl.uniform1i(advectProg.u.uVelocity, vel.read.attach(0));
+    gl.uniform1i(advectProg.u.uSource, dye.read.attach(1));
+    gl.uniform1f(advectProg.u.dissipation, fConfig.densDiss);
+    gl.uniform1f(advectProg.u.enableSmoke, 1);
+    blit(dye.write); dye.swap();
+  }
+
+  const fireMousePos = { x: 0.5, y: 0.15 };
+
+  function resizeFireCanvas() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w; canvas.height = h;
+      initFBOs();
+    }
+  }
+
+  resizeFireCanvas();
+
+  let lastFireTime = Date.now();
+  let fireAccum = 0;
+
+  function fireLoop() {
+    if (!fireEnabled) return;
+    resizeFireCanvas();
+    const now = Date.now();
+    const dt = Math.min((now - lastFireTime) / 1000, 0.01667);
+    lastFireTime = now;
+    fireAccum += dt;
+    if (fireAccum > 0.016) {
+      fireAccum = 0;
+      const numSplats = 2 + (Math.random() * 2 | 0);
+      for (let i = 0; i < numSplats; i++) {
+        const brightness = 0.05 + Math.random() * 0.02;
+        splat(
+          fireMousePos.x + (Math.random() - 0.5) * 0.1,
+          fireMousePos.y + Math.random() * 0.02,
+          (Math.random() - 0.5) * 25,
+          25 + Math.random() * 35,
+          { r: brightness, g: brightness * 0.85, b: brightness * 0.5 }
+        );
+      }
+      if (Math.random() > 0.65) {
+        splat(
+          fireMousePos.x + (Math.random() - 0.5) * 0.05,
+          fireMousePos.y + 0.01,
+          (Math.random() - 0.5) * 15,
+          40 + Math.random() * 25,
+          { r: 0.06, g: 0.05, b: 0.03 }
+        );
+      }
+    }
+    simulationStep(dt);
+    applyBloom(dye.read, bloomFBO);
+    applySunrays(dye.read, sunraysTempFBO, sunraysFBO);
+    gl.disable(gl.BLEND);
+    displayProg.bind();
+    gl.uniform2f(displayProg.u.texelSize, 1/gl.drawingBufferWidth, 1/gl.drawingBufferHeight);
+    gl.uniform1i(displayProg.u.uTexture, dye.read.attach(0));
+    gl.uniform1i(displayProg.u.uBloom, bloomFBO.attach(1));
+    gl.uniform1i(displayProg.u.uSunrays, sunraysFBO.attach(2));
+    blit(null);
+    requestAnimationFrame(fireLoop);
+  }
+  fireLoop();
+}
+
+// ============================================================
+//  HERO 3D CANVAS (Three.js-style via Canvas 2D)
+// ============================================================
+
+const heroCanvas = document.getElementById('heroCanvas');
+const hCtx = heroCanvas.getContext('2d');
+
+let heroW, heroH;
+let mouseX = 0.5, mouseY = 0.5;
+let scrollY = 0;
+let particles = [];
+
+function resizeHero() {
+  const rect = heroCanvas.parentElement.getBoundingClientRect();
+  heroW = rect.width * window.devicePixelRatio;
+  heroH = rect.height * window.devicePixelRatio;
+  heroCanvas.width = heroW;
+  heroCanvas.height = heroH;
+}
+
+resizeHero();
+window.addEventListener('resize', resizeHero);
+
+// Initialize floating particles
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random(),
+    y: Math.random(),
+    z: Math.random() * 0.8 + 0.2,
+    vx: (Math.random() - 0.5) * 0.0003,
+    vy: -Math.random() * 0.0008 - 0.0002,
+    size: Math.random() * 2.5 + 0.5,
+    alpha: Math.random() * 0.6 + 0.1,
+    hue: Math.random() > 0.5 ? 25 : 15
+  });
+}
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX / window.innerWidth;
+  mouseY = e.clientY / window.innerHeight;
+});
+
+window.addEventListener('scroll', () => {
+  scrollY = window.scrollY;
+});
+
+let heroTime = 0;
+
+function drawHero() {
+  heroTime += 0.016;
+  hCtx.clearRect(0, 0, heroW, heroH);
+
+  const cx = heroW * 0.5;
+  const cy = heroH * 0.48;
+  const parallaxX = (mouseX - 0.5) * 30;
+  const parallaxY = (mouseY - 0.5) * 20;
+  const scrollZoom = Math.max(0.6, 1 - scrollY * 0.0003);
+  const baseRadius = Math.min(heroW, heroH) * 0.22 * scrollZoom;
+
+  // Outer glow
+  const outerGlow = hCtx.createRadialGradient(
+    cx + parallaxX, cy + parallaxY, baseRadius * 0.3,
+    cx + parallaxX, cy + parallaxY, baseRadius * 2.5
+  );
+  outerGlow.addColorStop(0, 'rgba(224, 92, 0, 0.08)');
+  outerGlow.addColorStop(0.5, 'rgba(224, 92, 0, 0.02)');
+  outerGlow.addColorStop(1, 'rgba(224, 92, 0, 0)');
+  hCtx.fillStyle = outerGlow;
+  hCtx.fillRect(0, 0, heroW, heroH);
+
+  // Ring
+  const ringRadius = baseRadius;
+  const ringBreath = 1 + Math.sin(heroTime * 0.8) * 0.015;
+  const actualRing = ringRadius * ringBreath;
+
+  hCtx.save();
+  hCtx.translate(cx + parallaxX, cy + parallaxY);
+
+  // Ring glow
+  hCtx.beginPath();
+  hCtx.arc(0, 0, actualRing, 0, Math.PI * 2);
+  hCtx.strokeStyle = 'rgba(224, 92, 0, 0.08)';
+  hCtx.lineWidth = 20 * scrollZoom;
+  hCtx.stroke();
+
+  // Main ring
+  const ringGrad = hCtx.createConicGradient(heroTime * 0.3, 0, 0);
+  ringGrad.addColorStop(0, 'rgba(224, 92, 0, 0.6)');
+  ringGrad.addColorStop(0.25, 'rgba(255, 122, 26, 0.3)');
+  ringGrad.addColorStop(0.5, 'rgba(55, 48, 163, 0.2)');
+  ringGrad.addColorStop(0.75, 'rgba(15, 118, 110, 0.3)');
+  ringGrad.addColorStop(1, 'rgba(224, 92, 0, 0.6)');
+
+  hCtx.beginPath();
+  hCtx.arc(0, 0, actualRing, 0, Math.PI * 2);
+  hCtx.strokeStyle = ringGrad;
+  hCtx.lineWidth = 3 * scrollZoom;
+  hCtx.stroke();
+
+  // Inner ring
+  hCtx.beginPath();
+  hCtx.arc(0, 0, actualRing * 0.85, 0, Math.PI * 2);
+  hCtx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+  hCtx.lineWidth = 1;
+  hCtx.stroke();
+
+  // Central flame glow
+  const flameBreath = 1 + Math.sin(heroTime * 1.2) * 0.08 + Math.sin(heroTime * 2.1) * 0.04;
+  const flameRadius = actualRing * 0.35 * flameBreath;
+
+  const flameGradient = hCtx.createRadialGradient(0, 0, 0, 0, 0, flameRadius);
+  flameGradient.addColorStop(0, 'rgba(255, 200, 120, 0.4)');
+  flameGradient.addColorStop(0.3, 'rgba(224, 92, 0, 0.25)');
+  flameGradient.addColorStop(0.6, 'rgba(224, 92, 0, 0.08)');
+  flameGradient.addColorStop(1, 'rgba(224, 92, 0, 0)');
+
+  hCtx.beginPath();
+  hCtx.arc(0, 0, flameRadius, 0, Math.PI * 2);
+  hCtx.fillStyle = flameGradient;
+  hCtx.fill();
+
+  // Core bright dot
+  const coreGrad = hCtx.createRadialGradient(0, 0, 0, 0, 0, flameRadius * 0.3);
+  coreGrad.addColorStop(0, 'rgba(255, 240, 220, 0.6)');
+  coreGrad.addColorStop(1, 'rgba(255, 180, 100, 0)');
+  hCtx.beginPath();
+  hCtx.arc(0, 0, flameRadius * 0.3, 0, Math.PI * 2);
+  hCtx.fillStyle = coreGrad;
+  hCtx.fill();
+
+  hCtx.restore();
+
+  // Particles
+  particles.forEach(p => {
+    p.x += p.vx + (mouseX - 0.5) * 0.0001;
+    p.y += p.vy;
+
+    if (p.y < -0.05) {
+      p.y = 1.05;
+      p.x = 0.3 + Math.random() * 0.4;
+    }
+    if (p.x < -0.05) p.x = 1.05;
+    if (p.x > 1.05) p.x = -0.05;
+
+    const px = p.x * heroW + parallaxX * p.z * 0.5;
+    const py = p.y * heroH + parallaxY * p.z * 0.5;
+    const size = p.size * p.z * scrollZoom * window.devicePixelRatio;
+    const alpha = p.alpha * (0.5 + Math.sin(heroTime * 2 + p.z * 10) * 0.5) * scrollZoom;
+
+    // Distance from center
+    const dx = px - (cx + parallaxX);
+    const dy = py - (cy + parallaxY);
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const ringDist = Math.abs(dist - actualRing);
+
+    let finalAlpha = alpha;
+    if (ringDist < actualRing * 0.3) {
+      finalAlpha *= 1.5;
+    }
+
+    hCtx.beginPath();
+    hCtx.arc(px, py, size, 0, Math.PI * 2);
+    hCtx.fillStyle = p.hue > 20
+      ? `rgba(224, 130, 50, ${Math.min(finalAlpha, 0.8)})`
+      : `rgba(200, 180, 160, ${Math.min(finalAlpha, 0.5)})`;
+    hCtx.fill();
+  });
+
+  requestAnimationFrame(drawHero);
+}
+
+drawHero();
+
+// ============================================================
+//  SCROLL ANIMATIONS
+// ============================================================
+
+const nav = document.getElementById('mainNav');
+const sections = document.querySelectorAll('.section, .cta-section');
+const ringProgress = document.getElementById('ringProgress');
+const ringHours = document.getElementById('ringHours');
+const streakCount = document.getElementById('streakCount');
+const streakBars = document.getElementById('streakBars');
+const skillBars = document.querySelectorAll('.skill-bar-fill');
+const swTimeEl = document.getElementById('swTime');
+
+// Build streak bars
+for (let i = 0; i < 14; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'streak-day' + (i < 13 ? ' active' : ' today');
+  streakBars.appendChild(bar);
+}
+
+// Intersection Observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+
+      // Progress ring animation
+      if (entry.target.id === 'sectionProgress') {
+        const circumference = 2 * Math.PI * 130;
+        const progress = 124 / 10000;
+        const offset = circumference * (1 - progress);
+        ringProgress.style.strokeDashoffset = offset;
+
+        let current = 0;
+        const target = 124;
+        const duration = 2000;
+        const start = performance.now();
+        function animateCount(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          current = Math.round(target * eased);
+          ringHours.textContent = current;
+          if (progress < 1) requestAnimationFrame(animateCount);
+        }
+        requestAnimationFrame(animateCount);
+      }
+
+      // Streak count
+      if (entry.target.id === 'sectionStreak') {
+        let current = 0;
+        const target = 14;
+        const start = performance.now();
+        function animateStreak(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / 1200, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          current = Math.round(target * eased);
+          streakCount.textContent = current;
+          if (progress < 1) requestAnimationFrame(animateStreak);
+        }
+        requestAnimationFrame(animateStreak);
+      }
+
+      // Skill bars
+      if (entry.target.id === 'sectionSkills') {
+        skillBars.forEach(bar => {
+          const w = parseFloat(bar.dataset.width);
+          setTimeout(() => {
+            bar.style.width = w + '%';
+          }, 400);
+        });
+      }
+    }
+  });
+}, { threshold: 0.25 });
+
+sections.forEach(section => observer.observe(section));
+
+// Nav scroll state
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Stopwatch ticker
+let swSeconds = 5048;
+setInterval(() => {
+  swSeconds++;
+  const h = Math.floor(swSeconds / 3600);
+  const m = Math.floor((swSeconds % 3600) / 60);
+  const s = swSeconds % 60;
+  swTimeEl.textContent =
+    String(h).padStart(2, '0') + ':' +
+    String(m).padStart(2, '0') + ':' +
+    String(s).padStart(2, '0');
+}, 1000);
+
+// Tilt on skill cards
+document.querySelectorAll('.skill-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    card.style.transform = `translateY(-8px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+</script>
+</body>
+</html>

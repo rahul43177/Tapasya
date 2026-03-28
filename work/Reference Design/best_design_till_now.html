@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tapasya — The Ancient Practice of Becoming Great</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --saffron: #E05C00;
+            --saffron-glow: #FF7A1A;
+            --indigo: #1a1035;
+            --teal: #0a3d3d;
+            --bg: #06060e;
+            --text: #e8e4df;
+            --text-dim: #8a8590;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        canvas#fireCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .scroll-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Announcement Bar ── */
+        .announcement {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            background: rgba(6,6,14,0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(224,92,0,0.1);
+            transition: transform 0.5s ease;
+        }
+        .announcement a {
+            color: var(--saffron);
+            text-decoration: none;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 32px; left: 0; right: 0;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 48px;
+            background: rgba(6,6,14,0.5);
+            backdrop-filter: blur(30px);
+            transition: all 0.4s ease;
+        }
+        nav.scrolled {
+            background: rgba(6,6,14,0.85);
+            border-bottom: 1px solid rgba(224,92,0,0.08);
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+        .nav-left a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            transition: color 0.3s;
+        }
+        .nav-left a:hover { color: var(--text); }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 1px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .logo span { color: var(--saffron); }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-right a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+        .nav-right a:hover { color: var(--text); }
+        .btn-demo {
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: var(--text);
+            color: var(--bg);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-demo:hover {
+            background: var(--saffron);
+            color: #fff;
+        }
+
+        /* ── Hero Section ── */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 48px 80px;
+            overflow: hidden;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 560px;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(42px, 6vw, 80px);
+            font-weight: 400;
+            line-height: 1.08;
+            margin-bottom: 28px;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeUp 1.2s ease 0.3s forwards;
+        }
+        .hero h1 em {
+            font-style: italic;
+            color: var(--saffron);
+        }
+        .hero-sub {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            max-width: 400px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease 0.7s forwards;
+        }
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            background: var(--saffron);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease 1s forwards;
+            box-shadow: 0 0 40px rgba(224,92,0,0.3);
+        }
+        .cta-primary:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 0 60px rgba(224,92,0,0.5);
+        }
+        .cta-primary::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 52px;
+            background: linear-gradient(135deg, var(--saffron-glow), transparent, var(--saffron));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .cta-primary:hover::after { opacity: 1; }
+
+        /* ── 3D Ring Container ── */
+        .hero-3d {
+            position: absolute;
+            right: -5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: all;
+        }
+        .hero-3d canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ── Scroll Sections ── */
+        .section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 48px;
+            overflow: hidden;
+        }
+        .section-inner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 80px;
+        }
+        .section-inner.reverse { flex-direction: row-reverse; }
+        .section-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        .section-visual {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--saffron);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 4vw, 52px);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .section h2 em {
+            font-style: italic;
+            color: var(--saffron);
+        }
+        .section p {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--text-dim);
+            max-width: 440px;
+        }
+
+        /* ── Progress Ring Visual ── */
+        .progress-ring-container {
+            width: 340px;
+            height: 340px;
+            position: relative;
+        }
+        .progress-ring-container svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(224,92,0,0.08);
+            stroke-width: 3;
+        }
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#saffronGrad);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 942;
+            stroke-dashoffset: 942;
+            transition: stroke-dashoffset 0.1s linear;
+            filter: drop-shadow(0 0 12px rgba(224,92,0,0.5));
+        }
+        .progress-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .progress-hours {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+        .progress-energy {
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(224,92,0,0.06) 0%, transparent 70%);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        /* ── Timer Visual ── */
+        .timer-container {
+            width: 280px;
+            height: 360px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .timer-glass {
+            width: 200px;
+            height: 300px;
+            border: 1px solid rgba(224,92,0,0.15);
+            border-radius: 100px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(224,92,0,0.02);
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 60px rgba(224,92,0,0.05),
+                inset 0 0 40px rgba(224,92,0,0.03);
+        }
+        .timer-fill {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(224,92,0,0.25), rgba(224,92,0,0.05));
+            border-radius: 0 0 100px 100px;
+            transition: height 0.3s ease;
+        }
+        .timer-time {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 400;
+            color: var(--text);
+            z-index: 2;
+        }
+        .timer-pulse {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(224,92,0,0.15), transparent);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        /* ── Skill Cards ── */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            perspective: 800px;
+        }
+        .skill-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(224,92,0,0.08);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+            cursor: default;
+        }
+        .skill-card:hover {
+            border-color: rgba(224,92,0,0.25);
+            background: rgba(224,92,0,0.04);
+            transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 20px 60px rgba(224,92,0,0.1);
+        }
+        .skill-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .skill-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .skill-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+        .skill-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--saffron), var(--saffron-glow));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1.5s ease;
+            box-shadow: 0 0 8px rgba(224,92,0,0.5);
+        }
+        .skill-hours {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* ── Community / Constellation ── */
+        .constellation-canvas {
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+
+        /* ── Final CTA Section ── */
+        .final-cta {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 48px;
+        }
+        .final-cta h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .final-cta h2 em {
+            font-style: italic;
+            color: var(--saffron);
+        }
+        .final-cta p {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 480px;
+        }
+        .cta-final-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 44px;
+            border-radius: 50px;
+            background: var(--saffron);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 60px rgba(224,92,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-final-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 100px rgba(224,92,0,0.6);
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 40px 48px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dim);
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.1; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ── Scroll Reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Section dividers ── */
+        .section-divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--saffron), transparent);
+            margin: 0 auto;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            nav { padding: 14px 24px; }
+            .nav-left a:not(:first-child) { display: none; }
+            .hero { padding: 120px 24px 60px; }
+            .hero-3d {
+                position: absolute;
+                right: -20%;
+                width: 80vw;
+                opacity: 0.5;
+            }
+            .section { padding: 80px 24px; }
+            .section-inner, .section-inner.reverse {
+                flex-direction: column;
+                gap: 40px;
+                text-align: center;
+            }
+            .section p { max-width: 100%; }
+            .skills-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Streak flame canvas ── */
+        .streak-canvas-wrap {
+            width: 340px;
+            height: 400px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .streak-canvas-wrap canvas {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireCanvas"></canvas>
+
+    <div class="announcement">
+        A new path to mastery awaits — Tapasya 2.0 is here <a href="#">→</a>
+    </div>
+
+    <nav id="mainNav">
+        <div class="nav-left">
+            <a href="#">Philosophy</a>
+            <a href="#">Practice</a>
+        </div>
+        <div class="logo">Tapas<span>ya</span></div>
+        <div class="nav-right">
+            <a href="#">Enter</a>
+            <a href="#" class="btn-demo">Begin</a>
+        </div>
+    </nav>
+
+    <div class="scroll-container">
+
+        <!-- ═══════════ HERO ═══════════ -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1>The ancient practice of <em>becoming great</em></h1>
+                <p class="hero-sub">Track every hour. Build mastery. Transform discipline into an art form — one deliberate session at a time.</p>
+                <a href="#" class="cta-primary" id="heroBtn">
+                    Begin Practice
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+            </div>
+            <div class="hero-3d">
+                <canvas id="ringCanvas"></canvas>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECTION 1: PROGRESS ═══════════ -->
+        <section class="section" id="sectionProgress">
+            <div class="section-inner reveal">
+                <div class="section-text">
+                    <div class="section-label">Progress</div>
+                    <h2>Every hour is <em>an offering</em></h2>
+                    <p>The 10,000-hour ring tracks your journey to mastery. Watch your discipline become visible — a luminous arc of focused effort that grows with every session.</p>
+                </div>
+                <div class="section-visual">
+                    <div class="progress-ring-container" id="progressRing">
+                        <div class="progress-energy"></div>
+                        <svg viewBox="0 0 320 320">
+                            <defs>
+                                <linearGradient id="saffronGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#E05C00"/>
+                                    <stop offset="100%" stop-color="#FF7A1A"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="160" cy="160" r="150" class="progress-ring-bg"/>
+                            <circle cx="160" cy="160" r="150" class="progress-ring-fill" id="progressFill"/>
+                        </svg>
+                        <div class="progress-center">
+                            <div class="progress-hours" id="progressHours">0</div>
+                            <div class="progress-label">hours invested</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECTION 2: FOCUS ═══════════ -->
+        <section class="section" id="sectionFocus">
+            <div class="section-inner reverse reveal">
+                <div class="section-text">
+                    <div class="section-label">Focus</div>
+                    <h2>Stillness is the <em>deepest strength</em></h2>
+                    <p>Enter a focused session and let the world dissolve. The glass timer breathes with you, marking each moment of deliberate practice in serene calm.</p>
+                </div>
+                <div class="section-visual">
+                    <div class="timer-container">
+                        <div class="timer-glass">
+                            <div class="timer-fill" id="timerFill" style="height: 0%"></div>
+                            <div class="timer-pulse"></div>
+                            <div class="timer-time" id="timerDisplay">00:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECTION 3: STREAK ═══════════ -->
+        <section class="section" id="sectionStreak">
+            <div class="section-inner reveal">
+                <div class="section-text">
+                    <div class="section-label">Streak</div>
+                    <h2>Consistency <em>fuels the fire</em></h2>
+                    <p>Your discipline is a living flame. Each consecutive day of practice intensifies it — building momentum, power, and an unbreakable rhythm of mastery.</p>
+                </div>
+                <div class="section-visual">
+                    <div class="streak-canvas-wrap">
+                        <canvas id="streakCanvas" width="340" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECTION 4: SKILLS ═══════════ -->
+        <section class="section" id="sectionSkills">
+            <div class="section-inner reverse reveal">
+                <div class="section-text">
+                    <div class="section-label">Skills</div>
+                    <h2>Multiple paths, <em>one purpose</em></h2>
+                    <p>Track every discipline you practice. Each skill is a separate flame — growing independently, yet contributing to the same radiant core of mastery.</p>
+                </div>
+                <div class="section-visual">
+                    <div class="skills-grid" id="skillsGrid">
+                        <div class="skill-card">
+                            <div class="skill-icon">🧘</div>
+                            <div class="skill-name">Meditation</div>
+                            <div class="skill-bar"><div class="skill-bar-fill" data-width="78"></div></div>
+                            <div class="skill-hours">1,247 hours</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">🎵</div>
+                            <div class="skill-name">Music</div>
+                            <div class="skill-bar"><div class="skill-bar-fill" data-width="55"></div></div>
+                            <div class="skill-hours">824 hours</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">✍️</div>
+                            <div class="skill-name">Writing</div>
+                            <div class="skill-bar"><div class="skill-bar-fill" data-width="42"></div></div>
+                            <div class="skill-hours">610 hours</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">💻</div>
+                            <div class="skill-name">Code</div>
+                            <div class="skill-bar"><div class="skill-bar-fill" data-width="91"></div></div>
+                            <div class="skill-hours">3,420 hours</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ SECTION 5: COMMUNITY ═══════════ -->
+        <section class="section" id="sectionCommunity">
+            <div class="section-inner reveal">
+                <div class="section-text">
+                    <div class="section-label">Community</div>
+                    <h2>A constellation of <em>seekers</em></h2>
+                    <p>You are not alone on this path. Tapasya connects practitioners across the world — a quiet network of shared discipline, not competition.</p>
+                </div>
+                <div class="section-visual">
+                    <div class="constellation-canvas">
+                        <canvas id="constellationCanvas" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ FINAL CTA ═══════════ -->
+        <section class="final-cta reveal" id="sectionFinal">
+            <h2>Your fire is waiting.<br><em>Begin the practice.</em></h2>
+            <p>Step beyond productivity. Enter a system built for transformation, mastery, and the quiet power of disciplined effort.</p>
+            <button class="cta-final-btn" id="finalBtn">
+                Ignite Your Practice
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </section>
+
+        <footer>
+            <p>© 2026 Tapasya — Discipline is devotion.</p>
+        </footer>
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════
+        //  BACKGROUND PARTICLE FIRE (from reference)
+        // ══════════════════════════════════════════
+        const fireCanvas = document.getElementById('fireCanvas');
+        const fCtx = fireCanvas.getContext('2d');
+
+        function resizeFire() {
+            fireCanvas.width = window.innerWidth;
+            fireCanvas.height = window.innerHeight;
+        }
+        resizeFire();
+        window.addEventListener('resize', resizeFire);
+
+        const mouse = { x: window.innerWidth / 2, y: window.innerHeight * 0.75 };
+        let wind = 0, windTarget = 0, windTimer = 0, time = 0;
+
+        function noise(x, y) {
+            const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+            return n - Math.floor(n);
+        }
+        function smoothNoise(x, y) {
+            const ix = Math.floor(x), iy = Math.floor(y);
+            const fx = x - ix, fy = y - iy;
+            const a = noise(ix, iy), b = noise(ix + 1, iy);
+            const c = noise(ix, iy + 1), d = noise(ix + 1, iy + 1);
+            const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+            return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+        }
+
+        // Ambient ember particles for background
+        class BGEmber {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * fireCanvas.width;
+                this.y = fireCanvas.height + Math.random() * 100;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = -Math.random() * 1.2 - 0.3;
+                this.radius = Math.random() * 1.8 + 0.3;
+                this.life = 1;
+                this.decay = Math.random() * 0.003 + 0.001;
+            }
+            update() {
+                this.x += this.vx + wind * 0.2;
+                this.y += this.vy;
+                this.vx += (Math.random() - 0.5) * 0.05;
+                this.life -= this.decay;
+                if (this.life <= 0) this.reset();
+            }
+            draw(ctx) {
+                if (this.life <= 0) return;
+                let a = this.life * 0.6;
+                ctx.beginPath();
+                const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                g.addColorStop(0, `rgba(255, 140, 40, ${a})`);
+                g.addColorStop(1, `rgba(255, 80, 0, 0)`);
+                ctx.fillStyle = g;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const bgEmbers = [];
+        for (let i = 0; i < 60; i++) {
+            const e = new BGEmber();
+            e.y = Math.random() * fireCanvas.height;
+            bgEmbers.push(e);
+        }
+
+        function animateBG() {
+            time += 0.016;
+            windTimer -= 0.016;
+            if (windTimer <= 0) {
+                windTarget = (Math.random() - 0.5) * 1.5;
+                windTimer = Math.random() * 3 + 1;
+            }
+            wind += (windTarget - wind) * 0.02;
+
+            fCtx.globalCompositeOperation = 'source-over';
+            fCtx.fillStyle = 'rgba(6, 6, 14, 0.15)';
+            fCtx.fillRect(0, 0, fireCanvas.width, fireCanvas.height);
+
+            fCtx.globalCompositeOperation = 'lighter';
+            for (const e of bgEmbers) {
+                e.update();
+                e.draw(fCtx);
+            }
+            requestAnimationFrame(animateBG);
+        }
+        animateBG();
+
+
+        // ══════════════════════════════════════════
+        //  HERO 3D RING + FLAME (Canvas 2D simulation)
+        // ══════════════════════════════════════════
+        const ringCanvas = document.getElementById('ringCanvas');
+        const rCtx = ringCanvas.getContext('2d');
+        
+        let ringMouse = { x: 0.5, y: 0.5 };
+        let ringFlameIntensity = 1;
+
+        function resizeRing() {
+            const parent = ringCanvas.parentElement;
+            ringCanvas.width = parent.clientWidth * devicePixelRatio;
+            ringCanvas.height = parent.clientHeight * devicePixelRatio;
+            rCtx.scale(devicePixelRatio, devicePixelRatio);
+        }
+        resizeRing();
+        window.addEventListener('resize', resizeRing);
+
+        document.addEventListener('mousemove', (e) => {
+            ringMouse.x = e.clientX / window.innerWidth;
+            ringMouse.y = e.clientY / window.innerHeight;
+            // Intensity based on distance to center-right
+            let dx = e.clientX - window.innerWidth * 0.7;
+            let dy = e.clientY - window.innerHeight * 0.5;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            ringFlameIntensity = Math.max(0.6, 2.5 - dist / 300);
+        });
+
+        // Ring flame particles
+        class RingFlameParticle {
+            constructor(cx, cy) {
+                this.cx = cx; this.cy = cy;
+                this.reset();
+            }
+            reset() {
+                let spread = (Math.random() + Math.random()) / 2;
+                this.x = this.cx + (spread - 0.5) * 30;
+                this.y = this.cy + (Math.random() - 0.5) * 6;
+                let distFromCenter = (this.x - this.cx) / 30;
+                this.vx = distFromCenter * 1 + (Math.random() - 0.5) * 1;
+                this.vy = -Math.random() * 3 - 1;
+                this.radius = Math.random() * 14 + 6;
+                this.initialRadius = this.radius;
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+                this.originX = this.cx;
+                this.depth = Math.random();
+                this.seed = Math.random() * 1000;
+            }
+            update() {
+                let turb = smoothNoise(this.seed + time * 2, this.life * 5) - 0.5;
+                this.x += this.vx + wind * (1 - this.life) * 1.5;
+                this.y += this.vy;
+                this.vy -= 0.012;
+                this.vy *= 0.985;
+                this.vx += turb * 0.35;
+                this.vx *= 0.98;
+                let pullStrength = this.life * 0.025;
+                this.vx += (this.originX - this.x) * pullStrength;
+                this.life -= this.decay * ringFlameIntensity;
+                let lifeCurve = this.life * this.life;
+                this.radius = this.initialRadius * lifeCurve;
+                if (this.life <= 0) this.reset();
+            }
+            draw(ctx) {
+                let r, g, b, a;
+                if (this.life > 0.8) {
+                    let t = (this.life - 0.8) / 0.2;
+                    r = 255; g = Math.floor(240 + t * 15); b = Math.floor(200 + t * 40);
+                    a = this.life * 0.65;
+                } else if (this.life > 0.6) {
+                    let t = (this.life - 0.6) / 0.2;
+                    r = 255; g = Math.floor(170 + t * 70); b = Math.floor(40 + t * 160);
+                    a = this.life * 0.6;
+                } else if (this.life > 0.4) {
+                    let t = (this.life - 0.4) / 0.2;
+                    r = 255; g = Math.floor(85 + t * 85); b = Math.floor(5 + t * 35);
+                    a = this.life * 0.55;
+                } else if (this.life > 0.18) {
+                    let t = (this.life - 0.18) / 0.22;
+                    r = Math.floor(150 + t * 105); g = Math.floor(15 + t * 70); b = 0;
+                    a = this.life * 0.5;
+                } else {
+                    let t = this.life / 0.18;
+                    r = Math.floor(60 + t * 90); g = Math.floor(t * 12); b = 0;
+                    a = this.life * 0.35;
+                }
+                if (this.life <= 0 || this.radius <= 0) return;
+                let depthScale = 0.7 + this.depth * 0.6;
+                let drawRadius = this.radius * depthScale;
+                ctx.beginPath();
+                const gradient = ctx.createRadialGradient(this.x, this.y, drawRadius * 0.1, this.x, this.y, drawRadius);
+                gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${a})`);
+                gradient.addColorStop(0.4, `rgba(${r}, ${g * 0.85 | 0}, ${b * 0.5 | 0}, ${a * 0.7})`);
+                gradient.addColorStop(1, `rgba(${r * 0.5 | 0}, ${g * 0.3 | 0}, 0, 0)`);
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, drawRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Ring ember
+        class RingEmber {
+            constructor(cx, cy) { this.cx = cx; this.cy = cy; this.reset(); }
+            reset() {
+                this.x = this.cx + (Math.random() - 0.5) * 20;
+                this.y = this.cy;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = -Math.random() * 5 - 2;
+                this.radius = Math.random() * 2 + 0.5;
+                this.life = 1;
+                this.decay = Math.random() * 0.01 + 0.007;
+                this.gravity = 0.02;
+            }
+            update() {
+                this.x += this.vx + wind * 0.2;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.vx *= 0.99;
+                this.vx += (Math.random() - 0.5) * 0.2;
+                this.life -= this.decay;
+                if (this.life <= 0) this.reset();
+            }
+            draw(ctx) {
+                if (this.life <= 0) return;
+                let a = this.life;
+                ctx.beginPath();
+                const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                g.addColorStop(0, `rgba(255, ${120 + this.life * 100 | 0}, ${this.life * 30 | 0}, ${a})`);
+                g.addColorStop(1, `rgba(255, ${70 * this.life | 0}, 0, 0)`);
+                ctx.fillStyle = g;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        let ringParticles = [];
+        let ringEmbers = [];
+        let scrollProgress = 0;
+
+        function animateRing() {
+            const w = ringCanvas.width / devicePixelRatio;
+            const h = ringCanvas.height / devicePixelRatio;
+
+            // Ring center with parallax
+            let cx = w * 0.45 + (ringMouse.x - 0.5) * 30;
+            let cy = h * 0.5 + (ringMouse.y - 0.5) * 20;
+
+            // Zoom effect from scroll
+            let zoomScale = 1 + scrollProgress * 0.3;
+
+            rCtx.clearRect(0, 0, w, h);
+
+            // Draw the ring
+            rCtx.save();
+            rCtx.translate(cx, cy);
+            
+            // Slight tilt from mouse
+            let tiltX = (ringMouse.x - 0.5) * 0.15;
+            let tiltY = (ringMouse.y - 0.5) * 0.1;
+
+            let ringRadius = Math.min(w, h) * 0.28 * zoomScale;
+
+            // Outer glow
+            let glowGrad = rCtx.createRadialGradient(0, 0, ringRadius * 0.5, 0, 0, ringRadius * 1.8);
+            glowGrad.addColorStop(0, `rgba(224, 92, 0, ${0.08 * ringFlameIntensity})`);
+            glowGrad.addColorStop(0.4, `rgba(224, 92, 0, ${0.03 * ringFlameIntensity})`);
+            glowGrad.addColorStop(1, 'rgba(224, 92, 0, 0)');
+            rCtx.fillStyle = glowGrad;
+            rCtx.fillRect(-ringRadius * 2, -ringRadius * 2, ringRadius * 4, ringRadius * 4);
+
+            // Draw ring (ellipse for 3D effect)
+            let scaleY = 1 - Math.abs(tiltY) * 0.3;
+            rCtx.save();
+            rCtx.scale(1, scaleY);
+            
+            // Ring shadow/glow
+            rCtx.beginPath();
+            rCtx.arc(0, 0, ringRadius, 0, Math.PI * 2);
+            rCtx.strokeStyle = `rgba(224, 92, 0, ${0.04})`;
+            rCtx.lineWidth = ringRadius * 0.15;
+            rCtx.stroke();
+
+            // Ring main
+            rCtx.beginPath();
+            rCtx.arc(0, 0, ringRadius, 0, Math.PI * 2);
+            rCtx.strokeStyle = `rgba(224, 92, 0, ${0.15 + Math.sin(time * 3) * 0.05})`;
+            rCtx.lineWidth = 2.5;
+            rCtx.stroke();
+
+            // Inner highlight
+            rCtx.beginPath();
+            rCtx.arc(0, 0, ringRadius - 1, 0, Math.PI * 2);
+            rCtx.strokeStyle = `rgba(255, 160, 60, ${0.08 + Math.sin(time * 5) * 0.03})`;
+            rCtx.lineWidth = 1;
+            rCtx.stroke();
+
+            // Energy flowing along ring
+            for (let i = 0; i < 6; i++) {
+                let angle = time * 0.5 + i * Math.PI / 3;
+                let ex = Math.cos(angle) * ringRadius;
+                let ey = Math.sin(angle) * ringRadius;
+                let eg = rCtx.createRadialGradient(ex, ey, 0, ex, ey, 15);
+                eg.addColorStop(0, `rgba(255, 140, 40, 0.3)`);
+                eg.addColorStop(1, `rgba(255, 100, 20, 0)`);
+                rCtx.beginPath();
+                rCtx.fillStyle = eg;
+                rCtx.arc(ex, ey, 15, 0, Math.PI * 2);
+                rCtx.fill();
+            }
+
+            rCtx.restore();
+            rCtx.restore();
+
+            // Init particles if needed
+            if (ringParticles.length === 0) {
+                for (let i = 0; i < 80; i++) ringParticles.push(new RingFlameParticle(cx, cy));
+                for (let i = 0; i < 15; i++) ringEmbers.push(new RingEmber(cx, cy));
+            }
+
+            // Update flame center
+            for (const p of ringParticles) { p.cx = cx; p.cy = cy; p.originX = cx; }
+            for (const e of ringEmbers) { e.cx = cx; e.cy = cy; }
+
+            // Draw flame (additive)
+            rCtx.globalCompositeOperation = 'lighter';
+            for (const p of ringParticles) { p.update(); p.draw(rCtx); }
+            for (const e of ringEmbers) { e.update(); e.draw(rCtx); }
+            rCtx.globalCompositeOperation = 'source-over';
+
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        // ══════════════════════════════════════════
+        //  STREAK FIRE CANVAS
+        // ══════════════════════════════════════════
+        const streakCanvas = document.getElementById('streakCanvas');
+        const sCtx = streakCanvas.getContext('2d');
+
+        class StreakFlame {
+            constructor() { this.reset(); }
+            reset() {
+                let cx = 170, cy = 320;
+                let spread = (Math.random() + Math.random() + Math.random()) / 3;
+                this.x = cx + (spread - 0.5) * 40;
+                this.y = cy + (Math.random() - 0.5) * 8;
+                let distFromCenter = (this.x - cx) / 40;
+                this.vx = distFromCenter * 1.2 + (Math.random() - 0.5) * 1.2;
+                this.vy = -Math.random() * 3.5 - 1.5;
+                this.radius = Math.random() * 16 + 7;
+                this.initialRadius = this.radius;
+                this.life = 1;
+                this.decay = Math.random() * 0.013 + 0.008;
+                this.originX = cx;
+                this.depth = Math.random();
+                this.seed = Math.random() * 1000;
+            }
+            update(intensity) {
+                let turb = smoothNoise(this.seed + time * 2, this.life * 5) - 0.5;
+                this.x += this.vx + wind * (1 - this.life) * 1.5;
+                this.y += this.vy * intensity;
+                this.vy -= 0.015;
+                this.vy *= 0.985;
+                this.vx += turb * 0.35;
+                this.vx *= 0.98;
+                let pullStrength = this.life * 0.03;
+                this.vx += (this.originX - this.x) * pullStrength;
+                this.life -= this.decay;
+                let lifeCurve = this.life * this.life;
+                this.radius = this.initialRadius * lifeCurve * intensity;
+                if (this.life <= 0) this.reset();
+            }
+            draw(ctx) {
+                let r, g, b, a;
+                if (this.life > 0.8) {
+                    r = 255; g = 245; b = 220; a = this.life * 0.6;
+                } else if (this.life > 0.6) {
+                    let t = (this.life - 0.6) / 0.2;
+                    r = 255; g = Math.floor(170 + t * 70); b = Math.floor(40 + t * 160); a = this.life * 0.55;
+                } else if (this.life > 0.35) {
+                    let t = (this.life - 0.35) / 0.25;
+                    r = 255; g = Math.floor(80 + t * 90); b = Math.floor(5 + t * 35); a = this.life * 0.5;
+                } else {
+                    let t = this.life / 0.35;
+                    r = Math.floor(120 + t * 135); g = Math.floor(t * 60); b = 0; a = this.life * 0.4;
+                }
+                if (this.life <= 0 || this.radius <= 0) return;
+                let drawRadius = this.radius * (0.7 + this.depth * 0.6);
+                ctx.beginPath();
+                const gradient = ctx.createRadialGradient(this.x, this.y, drawRadius * 0.1, this.x, this.y, drawRadius);
+                gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${a})`);
+                gradient.addColorStop(0.4, `rgba(${r}, ${g * 0.85 | 0}, ${b * 0.5 | 0}, ${a * 0.7})`);
+                gradient.addColorStop(1, `rgba(${r * 0.5 | 0}, ${g * 0.3 | 0}, 0, 0)`);
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, drawRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const streakFlames = [];
+        for (let i = 0; i < 60; i++) streakFlames.push(new StreakFlame());
+
+        let streakIntensity = 0;
+
+        function animateStreak() {
+            sCtx.globalCompositeOperation = 'source-over';
+            sCtx.fillStyle = 'rgba(6, 6, 14, 0.3)';
+            sCtx.fillRect(0, 0, 340, 400);
+
+            // Glow
+            sCtx.globalCompositeOperation = 'lighter';
+            let glowR = 100 + streakIntensity * 60;
+            let g = sCtx.createRadialGradient(170, 320, 0, 170, 320, glowR);
+            g.addColorStop(0, `rgba(224, 92, 0, ${0.06 * streakIntensity})`);
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            sCtx.fillStyle = g;
+            sCtx.fillRect(0, 200, 340, 200);
+
+            for (const f of streakFlames) { f.update(Math.max(0.3, streakIntensity)); f.draw(sCtx); }
+
+            // Streak text
+            sCtx.globalCompositeOperation = 'source-over';
+            sCtx.fillStyle = `rgba(232, 228, 223, ${0.8 * streakIntensity})`;
+            sCtx.font = '600 14px Inter';
+            sCtx.textAlign = 'center';
+            let days = Math.floor(streakIntensity * 128);
+            sCtx.fillText(`${days}-day streak`, 170, 380);
+
+            requestAnimationFrame(animateStreak);
+        }
+        animateStreak();
+
+
+        // ══════════════════════════════════════════
+        //  CONSTELLATION CANVAS
+        // ══════════════════════════════════════════
+        const constCanvas = document.getElementById('constellationCanvas');
+        const cCtx = constCanvas.getContext('2d');
+
+        class Node {
+            constructor(isUser) {
+                this.x = Math.random() * 380 + 10;
+                this.y = Math.random() * 380 + 10;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.radius = isUser ? 5 : Math.random() * 2.5 + 1;
+                this.isUser = isUser;
+                this.speed = Math.random() * 0.3 + 0.1;
+                this.angle = Math.random() * Math.PI * 2;
+            }
+            update() {
+                this.angle += 0.005 * this.speed;
+                this.x = this.baseX + Math.sin(this.angle) * 8;
+                this.y = this.baseY + Math.cos(this.angle * 0.7) * 6;
+            }
+            draw(ctx, opacity) {
+                ctx.beginPath();
+                if (this.isUser) {
+                    let g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+                    g.addColorStop(0, `rgba(255, 140, 40, ${0.9 * opacity})`);
+                    g.addColorStop(0.5, `rgba(224, 92, 0, ${0.3 * opacity})`);
+                    g.addColorStop(1, `rgba(224, 92, 0, 0)`);
+                    ctx.fillStyle = g;
+                    ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                } else {
+                    ctx.fillStyle = `rgba(180, 170, 200, ${0.5 * opacity})`;
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                }
+                ctx.fill();
+            }
+        }
+
+        const nodes = [];
+        nodes.push(new Node(true)); // "You" node
+        nodes[0].baseX = 200; nodes[0].baseY = 200;
+        for (let i = 0; i < 30; i++) nodes.push(new Node(false));
+
+        let constOpacity = 0;
+
+        function animateConstellation() {
+            cCtx.clearRect(0, 0, 400, 400);
+            
+            for (const n of nodes) n.update();
+
+            // Draw connections
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let dx = nodes[i].x - nodes[j].x;
+                    let dy = nodes[i].y - nodes[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        let alpha = (1 - dist / 100) * 0.15 * constOpacity;
+                        if (nodes[i].isUser || nodes[j].isUser) alpha *= 3;
+                        cCtx.beginPath();
+                        cCtx.strokeStyle = (nodes[i].isUser || nodes[j].isUser)
+                            ? `rgba(224, 92, 0, ${alpha})`
+                            : `rgba(150, 140, 180, ${alpha})`;
+                        cCtx.lineWidth = 0.5;
+                        cCtx.moveTo(nodes[i].x, nodes[i].y);
+                        cCtx.lineTo(nodes[j].x, nodes[j].y);
+                        cCtx.stroke();
+                    }
+                }
+            }
+
+            for (const n of nodes) n.draw(cCtx, constOpacity);
+
+            // "You" label
+            if (constOpacity > 0.3) {
+                cCtx.fillStyle = `rgba(224, 92, 0, ${constOpacity * 0.7})`;
+                cCtx.font = '500 10px Inter';
+                cCtx.textAlign = 'center';
+                cCtx.fillText('YOU', nodes[0].x, nodes[0].y - 16);
+            }
+
+            requestAnimationFrame(animateConstellation);
+        }
+        animateConstellation();
+
+
+        // ══════════════════════════════════════════
+        //  SCROLL HANDLER
+        // ══════════════════════════════════════════
+        const progressFill = document.getElementById('progressFill');
+        const progressHoursEl = document.getElementById('progressHours');
+        const timerFill = document.getElementById('timerFill');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const skillBars = document.querySelectorAll('.skill-bar-fill');
+
+        function getVisibility(el) {
+            const rect = el.getBoundingClientRect();
+            const vh = window.innerHeight;
+            let visible = 1 - (rect.top / vh);
+            return Math.max(0, Math.min(1, visible));
+        }
+
+        function onScroll() {
+            // Hero scroll progress
+            scrollProgress = Math.min(1, window.scrollY / window.innerHeight);
+
+            // Nav style
+            document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+
+            // Reveal animations
+            document.querySelectorAll('.reveal').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    el.classList.add('visible');
+                }
+            });
+
+            // Progress ring
+            const progSec = document.getElementById('sectionProgress');
+            let progVis = getVisibility(progSec);
+            if (progVis > 0) {
+                let p = Math.min(1, progVis * 1.5);
+                let circumference = 942;
+                progressFill.style.strokeDashoffset = circumference * (1 - p * 0.72);
+                let hours = Math.floor(p * 7200);
+                progressHoursEl.textContent = hours.toLocaleString();
+            }
+
+            // Timer
+            const focusSec = document.getElementById('sectionFocus');
+            let focusVis = getVisibility(focusSec);
+            if (focusVis > 0) {
+                let p = Math.min(1, focusVis * 1.5);
+                timerFill.style.height = (p * 70) + '%';
+                let mins = Math.floor(p * 45);
+                let secs = Math.floor((p * 45 * 60) % 60);
+                timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+
+            // Streak
+            const streakSec = document.getElementById('sectionStreak');
+            streakIntensity = Math.min(1.5, getVisibility(streakSec) * 2);
+
+            // Skills
+            const skillsSec = document.getElementById('sectionSkills');
+            let skillVis = getVisibility(skillsSec);
+            if (skillVis > 0.3) {
+                skillBars.forEach(bar => {
+                    bar.style.width = bar.dataset.width + '%';
+                });
+            }
+
+            // Constellation
+            const commSec = document.getElementById('sectionCommunity');
+            constOpacity = Math.min(1, getVisibility(commSec) * 1.8);
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+
+        // ══════════════════════════════════════════
+        //  CLICK INTERACTIONS
+        // ══════════════════════════════════════════
+
+        // Hero CTA ripple
+        document.getElementById('heroBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            createRipple(window.innerWidth * 0.7, window.innerHeight * 0.5);
+        });
+
+        // Final CTA burst
+        document.getElementById('finalBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            createBurst(window.innerWidth / 2, window.innerHeight / 2);
+        });
+
+        function createRipple(x, y) {
+            let ripple = { x, y, radius: 0, maxRadius: 400, alpha: 0.4 };
+            function drawRipple() {
+                ripple.radius += 6;
+                ripple.alpha *= 0.97;
+                if (ripple.alpha < 0.01) return;
+                fCtx.globalCompositeOperation = 'lighter';
+                fCtx.beginPath();
+                fCtx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+                fCtx.strokeStyle = `rgba(224, 92, 0, ${ripple.alpha})`;
+                fCtx.lineWidth = 2;
+                fCtx.stroke();
+                requestAnimationFrame(drawRipple);
+            }
+            drawRipple();
+        }
+
+        function createBurst(x, y) {
+            for (let i = 0; i < 40; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = Math.random() * 6 + 2;
+                let b = {
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: Math.random() * 3 + 1,
+                    life: 1,
+                    decay: Math.random() * 0.015 + 0.01
+                };
+                function drawBurst() {
+                    b.x += b.vx;
+                    b.y += b.vy;
+                    b.vx *= 0.98;
+                    b.vy *= 0.98;
+                    b.life -= b.decay;
+                    if (b.life <= 0) return;
+                    fCtx.globalCompositeOperation = 'lighter';
+                    fCtx.beginPath();
+                    let g = fCtx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+                    g.addColorStop(0, `rgba(255, 140, 40, ${b.life})`);
+                    g.addColorStop(1, `rgba(224, 92, 0, 0)`);
+                    fCtx.fillStyle = g;
+                    fCtx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                    fCtx.fill();
+                    requestAnimationFrame(drawBurst);
+                }
+                drawBurst();
+            }
+            createRipple(x, y);
+        }
+
+        // Ring click ripple
+        document.querySelector('.hero-3d').addEventListener('click', (e) => {
+            createRipple(e.clientX, e.clientY);
+        });
+
+    </script>
+</body>
+</html>

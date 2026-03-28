@@ -475,18 +475,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
     <div className="bg-surface-container border border-surface-container-highest p-6">
       {/* Mode toggle */}
       <div className="flex mb-6 border border-surface-container-highest">
-        <button
-          onClick={() => handleModeSwitch('stopwatch')}
-          disabled={timerState !== 'idle'}
-          className={cn(
-            'flex-1 py-2 text-xs uppercase tracking-widest font-sans transition-colors disabled:opacity-50',
-            mode === 'stopwatch'
-              ? 'bg-brand-copper text-white'
-              : 'bg-transparent text-on-surface-variant hover:text-on-surface'
-          )}
-        >
-          Stopwatch
-        </button>
+        
         <button
           onClick={() => handleModeSwitch('pomodoro')}
           disabled={timerState !== 'idle'}
@@ -498,6 +487,18 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
           )}
         >
           Pomodoro
+        </button>
+        <button
+          onClick={() => handleModeSwitch('stopwatch')}
+          disabled={timerState !== 'idle'}
+          className={cn(
+            'flex-1 py-2 text-xs uppercase tracking-widest font-sans transition-colors disabled:opacity-50',
+            mode === 'stopwatch'
+              ? 'bg-brand-copper text-white'
+              : 'bg-transparent text-on-surface-variant hover:text-on-surface'
+          )}
+        >
+          Flowmodoro
         </button>
       </div>
 
