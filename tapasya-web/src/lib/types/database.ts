@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          id: string
+          slug: string
+          name: string
+          description: string
+          category: string
+          rarity: string
+          icon: string
+          trigger_type: string
+          trigger_value: number
+          trigger_skill_specific: boolean
+          points: number
+          sort_order: number
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name: string
+          description: string
+          category: string
+          rarity: string
+          icon: string
+          trigger_type: string
+          trigger_value: number
+          trigger_skill_specific?: boolean
+          points?: number
+          sort_order: number
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name?: string
+          description?: string
+          category?: string
+          rarity?: string
+          icon?: string
+          trigger_type?: string
+          trigger_value?: number
+          trigger_skill_specific?: boolean
+          points?: number
+          sort_order?: number
+          is_active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
       focus_sessions: {
         Row: {
           created_at: string
@@ -204,6 +255,55 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          id: string
+          user_id: string
+          achievement_id: string
+          skill_id: string | null
+          unlocked_at: string
+          progress: number
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          achievement_id: string
+          skill_id?: string | null
+          unlocked_at?: string
+          progress?: number
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          achievement_id?: string
+          skill_id?: string | null
+          unlocked_at?: string
+          progress?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
             referencedColumns: ["id"]
           },
         ]

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Newsreader, Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
+import LoadingBar from "@/components/ui/loading-bar";
 
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -42,6 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-on-surface font-sans" suppressHydrationWarning>
+        <LoadingBar />
         {children}
       </body>
     </html>

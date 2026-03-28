@@ -5,8 +5,15 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
 import { getQualifyingDates, calculateStreak } from '@/lib/utils/streaks'
+import { checkAchievementsAfterSession } from '@/lib/utils/achievements'
 import { Loader2 } from 'lucide-react'
 import type { Tables } from '@/lib/types'
+import type { Database } from '@/lib/types/database'
+import AchievementCelebration from '@/components/achievements/achievement-celebration'
+import NavigationGuardModal from '@/components/focus-timer/navigation-guard-modal'
+import { saveTimerState, loadTimerState, clearTimerState } from '@/lib/utils/timer-storage'
+
+type Achievement = Database['public']['Tables']['achievements']['Row']
 
 type Skill = Pick<Tables<'skills'>, 'id' | 'name' | 'icon' | 'color' | 'total_minutes' | 'total_hours' | 'total_sessions' | 'longest_streak'>
 type TimerState = 'idle' | 'running' | 'paused'
@@ -74,6 +81,9 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
   const [notes, setNotes] = useState('')
   const [unlockedMilestone, setUnlockedMilestone] = useState<MilestoneData | null>(null)
   const [savedSkillName, setSavedSkillName] = useState('')
+  const [unlockedAchievements, setUnlockedAchievements] = useState<Achievement[]>([])
+  const [showNavigationWarning, setShowNavigationWarning] = useState(false)
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
 
   const startTimeRef = useRef<number | null>(null)
   const elapsedBeforePauseRef = useRef(0)
@@ -129,6 +139,72 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
     return () => window.removeEventListener('beforeunload', handler)
   }, [timerState])
 
+  // Load timer state from localStorage on mount
+  useEffect(() => {
+    const savedState = loadTimerState()
+    if (savedState && savedState.state !== 'idle') {
+      setMode(savedState.mode)
+      setTimerState(savedState.state)
+      setElapsed(savedState.elapsed)
+      setRemaining(savedState.remaining)
+      setPomodoroMinutes(savedState.pomodoroMinutes)
+      setSelectedSkillId(savedState.selectedSkillId)
+      elapsedBeforePauseRef.current = savedState.elapsedBeforePause
+      remainingBeforePauseRef.current = savedState.remainingBeforePause
+
+      // If was running, pause it and let user resume
+      if (savedState.state === 'running') {
+        setTimerState('paused')
+      }
+    }
+  }, [])
+
+  // Save timer state to localStorage whenever it changes
+  useEffect(() => {
+    if (timerState !== 'idle') {
+      saveTimerState({
+        mode,
+        state: timerState,
+        elapsed,
+        remaining,
+        pomodoroMinutes,
+        selectedSkillId,
+        startTimeMs: startTimeRef.current,
+        elapsedBeforePause: elapsedBeforePauseRef.current,
+        remainingBeforePause: remainingBeforePauseRef.current,
+        savedAt: Date.now(),
+      })
+    } else {
+      clearTimerState()
+    }
+  }, [timerState, elapsed, remaining, mode, pomodoroMinutes, selectedSkillId])
+
+  // Block navigation when timer is running
+  useEffect(() => {
+    if (timerState !== 'running') return
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const link = target.closest('a')
+
+      if (link && link.href && !link.href.includes('#')) {
+        const url = new URL(link.href)
+        const currentPath = window.location.pathname
+
+        // If navigating away from current page
+        if (url.pathname !== currentPath) {
+          e.preventDefault()
+          e.stopPropagation()
+          setPendingNavigation(url.pathname)
+          setShowNavigationWarning(true)
+        }
+      }
+    }
+
+    document.addEventListener('click', handleClick, true)
+    return () => document.removeEventListener('click', handleClick, true)
+  }, [timerState])
+
   function resetTimerState() {
     setElapsed(0)
     elapsedBeforePauseRef.current = 0
@@ -141,6 +217,21 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
     setPomodoroComplete(false)
     setNotes('')
     setFocusRating(3)
+    clearTimerState()
+  }
+
+  function handleStayOnPage() {
+    setShowNavigationWarning(false)
+    setPendingNavigation(null)
+  }
+
+  function handleLeaveAnyway() {
+    setShowNavigationWarning(false)
+    resetTimerState()
+    if (pendingNavigation) {
+      router.push(pendingNavigation)
+      setPendingNavigation(null)
+    }
   }
 
   function handleModeSwitch(newMode: TimerMode) {
@@ -248,7 +339,31 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
         last_active_at: now.toISOString(),
       }).eq('id', userId)
 
-      // 7. If milestone unlocked, show celebration before resetting
+      // 7. Check for newly unlocked achievements
+      const newlyUnlockedAchievements = await checkAchievementsAfterSession(
+        supabase,
+        userId,
+        selectedSkillId,
+        {
+          duration: durationMinutes,
+          startTime: startTime.toISOString(),
+          skillTotalHours: newHours,
+          skillTotalSessions: skill.total_sessions + 1,
+          globalTotalHours: prevTotalHours + durationMinutes / 60,
+          globalStreak: globalStreak.current,
+          skillStreak: skillStreak.current,
+        }
+      )
+
+      // 8. Show achievement celebration if achievements unlocked
+      if (newlyUnlockedAchievements.length > 0) {
+        setSavedSkillName(skill.name)
+        setUnlockedAchievements(newlyUnlockedAchievements)
+        setSaving(false)
+        return
+      }
+
+      // 9. If milestone unlocked, show celebration before resetting
       if (milestone) {
         setSavedSkillName(skill.name)
         setUnlockedMilestone(milestone)
@@ -273,11 +388,23 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
     router.refresh()
   }
 
+  function handleAchievementsDismiss() {
+    setUnlockedAchievements([])
+    setSavedSkillName('')
+    resetTimerState()
+    router.refresh()
+  }
+
   const selectedSkill = skills.find(s => s.id === selectedSkillId)
   const displayTime = mode === 'stopwatch' ? formatTime(elapsed) : formatTime(remaining)
   const sessionDurationLabel = mode === 'pomodoro'
     ? `${pomodoroMinutes}m`
     : formatTime(elapsed)
+
+  // Achievement celebration screen
+  if (unlockedAchievements.length > 0) {
+    return <AchievementCelebration achievements={unlockedAchievements} onDismiss={handleAchievementsDismiss} />
+  }
 
   // Milestone celebration screen
   if (unlockedMilestone) {
@@ -450,6 +577,14 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
           </>
         )}
       </div>
+
+      {/* Navigation Guard Modal */}
+      <NavigationGuardModal
+        isOpen={showNavigationWarning}
+        onStay={handleStayOnPage}
+        onLeave={handleLeaveAnyway}
+        elapsedTime={formatTime(elapsed)}
+      />
     </div>
   )
 }

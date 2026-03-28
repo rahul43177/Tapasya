@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser } from '@/lib/supabase/auth'
 import { getMasteryLevel } from '@/lib/utils/mastery'
 import ProfileHeader from '@/components/profile/profile-header'
+import AchievementsSection from '@/components/profile/achievements-section'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -98,19 +99,8 @@ export default async function ProfilePage() {
         )}
       </div>
 
-      {/* Achievements - Placeholder for Phase 4 */}
-      <div className="bg-surface-container border border-surface-container-highest">
-        <div className="px-6 py-4 border-b border-surface-container-highest">
-          <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Achievements</p>
-        </div>
-        <div className="px-6 py-12 text-center">
-          <div className="text-5xl mb-3">🏆</div>
-          <p className="font-newsreader italic text-lg text-on-surface mb-2">Coming Soon</p>
-          <p className="text-sm font-sans text-on-surface-variant max-w-md mx-auto">
-            Achievement badges, milestone history, and more gamification features are coming in Phase 4!
-          </p>
-        </div>
-      </div>
+      {/* Achievements */}
+      <AchievementsSection />
     </div>
   )
 }

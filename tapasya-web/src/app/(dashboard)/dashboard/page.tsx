@@ -10,6 +10,10 @@ import DashboardClientWrapper from '@/components/dashboard/dashboard-client-wrap
 import SkillsSection from '@/components/dashboard/skills-section'
 import WeekAtGlance from '@/components/dashboard/week-at-glance'
 import StreakWarning from '@/components/dashboard/streak-warning'
+import RecentBadges from '@/components/dashboard/recent-badges'
+
+// Revalidate this page every 60 seconds (ISR)
+export const revalidate = 60
 
 function ProgressRing({ percent, size = 120, stroke = 8 }: { percent: number; size?: number; stroke?: number }) {
   const r = (size - stroke) / 2
@@ -92,6 +96,11 @@ export default async function DashboardPage() {
         lastActiveAt={profile?.last_active_at ?? null}
         streakRiskAlertsEnabled={profile?.streak_risk_alerts ?? true}
       />
+
+      {/* Recent Badges */}
+      <div className="mb-6">
+        <RecentBadges />
+      </div>
 
       {/* Today's Tapa — hero section */}
       <div className="bg-surface-container border border-surface-container-highest p-6 mb-6">
