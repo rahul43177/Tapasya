@@ -14,6 +14,7 @@ interface UserSettings {
   notifications_enabled: boolean
   daily_reminder_time: string | null
   streak_risk_alerts: boolean
+  is_public_profile: boolean
 }
 
 export default function SettingsPage() {
@@ -32,6 +33,7 @@ export default function SettingsPage() {
     notifications_enabled: true,
     daily_reminder_time: null,
     streak_risk_alerts: true,
+    is_public_profile: false,
   })
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function SettingsPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('daily_goal_minutes, timezone, default_timer_mode, default_pomodoro_minutes, default_break_minutes, notifications_enabled, daily_reminder_time, streak_risk_alerts')
+        .select('daily_goal_minutes, timezone, default_timer_mode, default_pomodoro_minutes, default_break_minutes, notifications_enabled, daily_reminder_time, streak_risk_alerts, is_public_profile')
         .eq('id', user.id)
         .single()
 
@@ -62,6 +64,7 @@ export default function SettingsPage() {
           notifications_enabled: profile.notifications_enabled ?? true,
           daily_reminder_time: profile.daily_reminder_time,
           streak_risk_alerts: profile.streak_risk_alerts ?? true,
+          is_public_profile: profile.is_public_profile ?? false,
         })
       }
 
@@ -281,6 +284,34 @@ export default function SettingsPage() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Privacy */}
+        <div className="bg-surface-container border border-surface-container-highest mb-6">
+          <div className="px-6 py-4 border-b border-surface-container-highest">
+            <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Privacy</p>
+          </div>
+          <div className="p-6 space-y-4">
+            {/* Public Profile */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-sans text-sm text-on-surface font-medium">Public profile</p>
+                <p className="text-xs text-on-surface-variant mt-0.5">Appear on the global leaderboard and allow others to see your stats</p>
+              </div>
+              <button
+                onClick={() => updateSetting('is_public_profile', !settings.is_public_profile)}
+                className={`w-12 h-6 flex items-center rounded-full transition-colors ${
+                  settings.is_public_profile ? 'bg-brand-copper' : 'bg-surface-container-highest'
+                }`}
+              >
+                <div
+                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                    settings.is_public_profile ? 'translate-x-6' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
             </div>
           </div>
         </div>

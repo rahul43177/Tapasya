@@ -16,52 +16,52 @@ export type Database = {
     Tables: {
       achievements: {
         Row: {
-          id: string
-          slug: string
-          name: string
-          description: string
           category: string
-          rarity: string
+          created_at: string | null
+          description: string
           icon: string
+          id: string
+          is_active: boolean | null
+          name: string
+          points: number
+          rarity: string
+          slug: string
+          sort_order: number
+          trigger_skill_specific: boolean | null
           trigger_type: string
           trigger_value: number
-          trigger_skill_specific: boolean
-          points: number
-          sort_order: number
-          is_active: boolean
-          created_at: string
         }
         Insert: {
-          id?: string
-          slug: string
-          name: string
-          description: string
           category: string
-          rarity: string
+          created_at?: string | null
+          description: string
           icon: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          points?: number
+          rarity: string
+          slug: string
+          sort_order: number
+          trigger_skill_specific?: boolean | null
           trigger_type: string
           trigger_value: number
-          trigger_skill_specific?: boolean
-          points?: number
-          sort_order: number
-          is_active?: boolean
-          created_at?: string
         }
         Update: {
-          id?: string
-          slug?: string
-          name?: string
-          description?: string
           category?: string
-          rarity?: string
+          created_at?: string | null
+          description?: string
           icon?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          points?: number
+          rarity?: string
+          slug?: string
+          sort_order?: number
+          trigger_skill_specific?: boolean | null
           trigger_type?: string
           trigger_value?: number
-          trigger_skill_specific?: boolean
-          points?: number
-          sort_order?: number
-          is_active?: boolean
-          created_at?: string
         }
         Relationships: []
       }
@@ -114,6 +114,13 @@ export type Database = {
             foreignKeyName: "focus_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "focus_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -131,6 +138,7 @@ export type Database = {
           default_timer_mode: string
           full_name: string | null
           id: string
+          is_public_profile: boolean | null
           last_active_at: string
           longest_streak: number
           notifications_enabled: boolean
@@ -153,6 +161,7 @@ export type Database = {
           default_timer_mode?: string
           full_name?: string | null
           id: string
+          is_public_profile?: boolean | null
           last_active_at?: string
           longest_streak?: number
           notifications_enabled?: boolean
@@ -175,6 +184,7 @@ export type Database = {
           default_timer_mode?: string
           full_name?: string | null
           id?: string
+          is_public_profile?: boolean | null
           last_active_at?: string
           longest_streak?: number
           notifications_enabled?: boolean
@@ -254,6 +264,113 @@ export type Database = {
             foreignKeyName: "skills_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skills_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squad_members: {
+        Row: {
+          id: string
+          joined_at: string | null
+          role: string | null
+          squad_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          squad_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          squad_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squads: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          description: string | null
+          focus_skill_name: string | null
+          id: string
+          invite_code: string
+          is_public: boolean | null
+          max_members: number | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          focus_skill_name?: string | null
+          id?: string
+          invite_code: string
+          is_public?: boolean | null
+          max_members?: number | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          focus_skill_name?: string | null
+          id?: string
+          invite_code?: string
+          is_public?: boolean | null
+          max_members?: number | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -261,37 +378,30 @@ export type Database = {
       }
       user_achievements: {
         Row: {
-          id: string
-          user_id: string
           achievement_id: string
+          id: string
+          progress: number | null
           skill_id: string | null
-          unlocked_at: string
-          progress: number
+          unlocked_at: string | null
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
           achievement_id: string
+          id?: string
+          progress?: number | null
           skill_id?: string | null
-          unlocked_at?: string
-          progress?: number
+          unlocked_at?: string | null
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
           achievement_id?: string
+          id?: string
+          progress?: number | null
           skill_id?: string | null
-          unlocked_at?: string
-          progress?: number
+          unlocked_at?: string | null
+          user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "user_achievements_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "user_achievements_achievement_id_fkey"
             columns: ["achievement_id"]
@@ -306,14 +416,75 @@ export type Database = {
             referencedRelation: "skills"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      global_leaderboard: {
+        Row: {
+          avatar_url: string | null
+          current_global_streak: number | null
+          full_name: string | null
+          id: string | null
+          longest_streak: number | null
+          total_hours: number | null
+          total_sessions: number | null
+          username: string | null
+        }
+        Relationships: []
+      }
+      weekly_squad_leaderboard: {
+        Row: {
+          avatar_url: string | null
+          current_global_streak: number | null
+          full_name: string | null
+          squad_id: string | null
+          user_id: string | null
+          username: string | null
+          weekly_hours: number | null
+          weekly_sessions: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      check_squad_capacity: { Args: { squad_uuid: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
