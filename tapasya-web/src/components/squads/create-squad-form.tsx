@@ -29,10 +29,6 @@ export default function CreateSquadForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateSquadValues>({
     resolver: zodResolver(createSquadSchema),
-    defaultValues: {
-      max_members: 5,
-      is_public: false,
-    },
   })
 
   async function onSubmit(values: CreateSquadValues) {
@@ -44,6 +40,13 @@ export default function CreateSquadForm() {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
         setServerError('You must be logged in to create a squad')
+        return
+      }
+
+      // Verify we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session) {
+        setServerError('Your session has expired. Please refresh the page and try again.')
         return
       }
 
@@ -80,6 +83,9 @@ export default function CreateSquadForm() {
         return
       }
 
+      // Refresh session to ensure token is valid for INSERT
+      await supabase.auth.refreshSession()
+
       // Create the squad
       const { data: squad, error: squadError } = await supabase
         .from('squads')
@@ -88,15 +94,24 @@ export default function CreateSquadForm() {
           description: values.description || null,
           focus_skill_name: values.focus_skill_name || null,
           invite_code: inviteCode,
-          max_members: selectedMaxMembers,
-          is_public: isPublic,
+          max_members: values.max_members ?? selectedMaxMembers,
+          is_public: values.is_public ?? isPublic,
           created_by: user.id,
         })
         .select()
         .single()
 
       if (squadError) {
-        setServerError(squadError.message)
+        console.error('Squad creation error:', squadError)
+
+        // Specific error messages for common issues
+        if (squadError.code === '42501') {
+          setServerError('Permission denied. Your session may have expired. Please refresh the page.')
+        } else if (squadError.message?.includes('policy') || squadError.message?.includes('row-level security')) {
+          setServerError('Unable to create squad due to security policy. Please try logging out and back in.')
+        } else {
+          setServerError(squadError.message)
+        }
         return
       }
 

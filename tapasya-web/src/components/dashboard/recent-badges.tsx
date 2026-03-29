@@ -43,7 +43,7 @@ export default async function RecentBadges() {
               <div className="flex-1">
                 <p className="font-sans text-sm font-semibold text-on-surface">{achievement.name}</p>
                 <p className="text-xs font-sans text-on-surface-variant">
-                  {formatDistanceToNow(new Date(ua.unlocked_at), { addSuffix: true })}
+                  {ua.unlocked_at && formatDistanceToNow(new Date(ua.unlocked_at), { addSuffix: true })}
                 </p>
               </div>
             </div>

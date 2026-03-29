@@ -4,7 +4,7 @@ import type { Database } from '@/lib/types/database'
 import { getAuthenticatedUser, hasSupabaseAuthCookie } from '@/lib/supabase/auth'
 
 // Protected routes — require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/skills', '/analytics', '/onboarding', '/sessions']
+const PROTECTED_ROUTES = ['/dashboard', '/skills', '/analytics', '/onboarding', '/sessions', '/squads']
 
 // Auth routes — redirect to dashboard if already authenticated
 const AUTH_ROUTES = ['/login', '/signup']

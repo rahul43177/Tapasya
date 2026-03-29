@@ -27,9 +27,9 @@ export const createSquadSchema = z.object({
     .int()
     .min(2, 'Squad must allow at least 2 members')
     .max(50, 'Squad cannot exceed 50 members')
-    .default(5),
+    .optional(),
 
-  is_public: z.boolean().default(false),
+  is_public: z.boolean().optional(),
 })
 
 export type CreateSquadValues = z.infer<typeof createSquadSchema>

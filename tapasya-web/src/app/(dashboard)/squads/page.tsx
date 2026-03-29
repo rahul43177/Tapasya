@@ -8,24 +8,40 @@ export default async function SquadsPage() {
   const supabase = await createClient()
   const user = await requireAuthenticatedUser(supabase)
 
-  // Fetch user's squads with member counts
-  const { data: squadMemberships, error } = await supabase
+  // Fetch user's squad memberships first
+  const { data: memberships, error: membershipError } = await supabase
     .from('squad_members')
-    .select(`
-      role,
-      squads (
-        id,
-        name,
-        description,
-        focus_skill_name,
-        max_members
-      )
-    `)
+    .select('squad_id, role')
     .eq('user_id', user.id)
 
-  if (error) {
-    console.error('Failed to fetch squads:', error)
+  if (membershipError) {
+    console.error('Failed to fetch memberships:', membershipError)
   }
+
+  const squadIds = (memberships || []).map(m => m.squad_id)
+
+  // Fetch squad details for these IDs (only if there are any)
+  let squadData = null
+  if (squadIds.length > 0) {
+    const { data, error: squadsError } = await supabase
+      .from('squads')
+      .select('id, name, description, focus_skill_name, max_members')
+      .in('id', squadIds)
+
+    if (squadsError) {
+      console.error('Failed to fetch squads:', squadsError)
+    }
+    squadData = data
+  }
+
+  // Merge role information
+  const squadMemberships = (squadData || []).map(squad => {
+    const membership = memberships?.find(m => m.squad_id === squad.id)
+    return {
+      role: membership?.role || 'member',
+      squads: squad
+    }
+  })
 
   // Get member counts for each squad
   const squadsWithCounts = await Promise.all(
@@ -45,7 +61,7 @@ export default async function SquadsPage() {
     })
   )
 
-  const squads = squadsWithCounts.filter(Boolean)
+  const squads = squadsWithCounts.filter((squad): squad is NonNullable<typeof squad> => squad !== null)
 
   return (
     <div className="min-h-screen bg-background p-8">

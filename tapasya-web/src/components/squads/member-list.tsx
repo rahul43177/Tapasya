@@ -3,15 +3,15 @@ import { cn } from '@/lib/utils/cn'
 
 interface Member {
   user_id: string
-  role: string
-  joined_at: string
+  role: string | null
+  joined_at: string | null
   profile: {
     full_name: string | null
     username: string | null
     avatar_url: string | null
     current_global_streak: number
     total_hours: number
-  }
+  } | null
 }
 
 interface MemberListProps {
@@ -22,9 +22,11 @@ interface MemberListProps {
 export default function MemberList({ members, currentUserId }: MemberListProps) {
   // Sort members: owners first, then by total hours
   const sortedMembers = [...members].sort((a, b) => {
-    if (a.role === 'owner' && b.role !== 'owner') return -1
-    if (a.role !== 'owner' && b.role === 'owner') return 1
-    return b.profile.total_hours - a.profile.total_hours
+    const aRole = a.role || 'member'
+    const bRole = b.role || 'member'
+    if (aRole === 'owner' && bRole !== 'owner') return -1
+    if (aRole !== 'owner' && bRole === 'owner') return 1
+    return (b.profile?.total_hours ?? 0) - (a.profile?.total_hours ?? 0)
   })
 
   return (
@@ -42,9 +44,12 @@ export default function MemberList({ members, currentUserId }: MemberListProps) 
       {/* Members List */}
       <div className="space-y-3">
         {sortedMembers.map((member) => {
+          // Skip members without profiles
+          if (!member.profile) return null
+
           const displayName = member.profile.full_name || member.profile.username || 'Anonymous'
           const isCurrentUser = member.user_id === currentUserId
-          const isOwner = member.role === 'owner'
+          const isOwner = (member.role || 'member') === 'owner'
 
           return (
             <div

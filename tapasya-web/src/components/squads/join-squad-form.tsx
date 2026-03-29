@@ -14,7 +14,7 @@ interface SquadPreview {
   name: string
   description: string | null
   focus_skill_name: string | null
-  max_members: number
+  max_members: number | null
   member_count: number
   is_full: boolean
   is_already_member: boolean
@@ -78,7 +78,7 @@ export default function JoinSquadForm() {
       }
 
       const memberCount = members?.length || 0
-      const isFull = memberCount >= squad.max_members
+      const isFull = squad.max_members !== null && memberCount >= squad.max_members
       const isAlreadyMember = members?.some((m) => m.user_id === user.id) || false
 
       setSquadPreview({
@@ -231,7 +231,7 @@ export default function JoinSquadForm() {
                   Members
                 </p>
                 <p className="font-mono text-sm text-on-surface">
-                  {squadPreview.member_count} / {squadPreview.max_members}
+                  {squadPreview.member_count} / {squadPreview.max_members ?? '∞'}
                 </p>
               </div>
               {squadPreview.focus_skill_name && (

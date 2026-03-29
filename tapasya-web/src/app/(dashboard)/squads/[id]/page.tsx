@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Copy, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuthenticatedUser } from '@/lib/supabase/auth'
 import { formatInviteCode, getCurrentWeekRangeISO } from '@/lib/utils/squads'
 import MemberList from '@/components/squads/member-list'
 import ActivityFeed from '@/components/squads/activity-feed'
 import SquadLeaderboard from '@/components/squads/squad-leaderboard'
+import CopyInviteButton from '@/components/squads/copy-invite-button'
 
 interface SquadPageProps {
   params: Promise<{ id: string }>
@@ -79,26 +80,28 @@ export default async function SquadPage({ params }: SquadPageProps) {
     console.error('Failed to fetch weekly activities:', weeklyError)
   }
 
-  // Calculate weekly stats for each member
-  const leaderboardEntries = (members || []).map(member => {
-    const userWeeklySessions = (weeklyActivities || []).filter(
-      activity => activity.user_id === member.user_id
-    )
-    const weeklyHours = userWeeklySessions.reduce(
-      (sum, session) => sum + session.duration,
-      0
-    ) / 3600
+  // Calculate weekly stats for each member (filter out null profiles)
+  const leaderboardEntries = (members || [])
+    .filter(member => member.profile !== null)
+    .map(member => {
+      const userWeeklySessions = (weeklyActivities || []).filter(
+        activity => activity.user_id === member.user_id
+      )
+      const weeklyHours = userWeeklySessions.reduce(
+        (sum, session) => sum + session.duration,
+        0
+      ) / 3600
 
-    return {
-      user_id: member.user_id,
-      full_name: member.profile?.full_name || null,
-      username: member.profile?.username || null,
-      avatar_url: member.profile?.avatar_url || null,
-      current_global_streak: member.profile?.current_global_streak || 0,
-      weekly_hours: weeklyHours,
-      weekly_sessions: userWeeklySessions.length,
-    }
-  })
+      return {
+        user_id: member.user_id,
+        full_name: member.profile!.full_name,
+        username: member.profile!.username,
+        avatar_url: member.profile!.avatar_url,
+        current_global_streak: member.profile!.current_global_streak,
+        weekly_hours: weeklyHours,
+        weekly_sessions: userWeeklySessions.length,
+      }
+    })
 
   // Fetch recent activity feed (last 7 days)
   const sevenDaysAgo = new Date()
@@ -180,13 +183,7 @@ export default async function SquadPage({ params }: SquadPageProps) {
                 <p className="font-mono text-2xl tracking-widest text-secondary font-bold">
                   {formatInviteCode(squad.invite_code)}
                 </p>
-                <button
-                  onClick={() => navigator.clipboard.writeText(squad.invite_code)}
-                  className="p-2 hover:bg-surface-container transition-colors"
-                  title="Copy invite code"
-                >
-                  <Copy className="w-4 h-4 text-on-surface-variant" />
-                </button>
+                <CopyInviteButton inviteCode={squad.invite_code} />
               </div>
             </div>
           </div>

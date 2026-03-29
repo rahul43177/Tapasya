@@ -8,7 +8,7 @@ interface SquadCardProps {
   description: string | null
   focus_skill_name: string | null
   member_count: number
-  max_members: number
+  max_members: number | null
   is_owner: boolean
 }
 
@@ -54,7 +54,7 @@ export default function SquadCard({
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-on-surface-variant" />
           <span className="font-mono text-xs text-on-surface-variant">
-            {member_count}/{max_members}
+            {member_count}/{max_members ?? '∞'}
           </span>
         </div>
 

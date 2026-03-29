@@ -273,7 +273,7 @@ export async function getAchievementsWithStatus(
       return {
         achievement,
         unlocked,
-        unlockedAt: userAchievement?.unlocked_at,
+        unlockedAt: userAchievement?.unlocked_at ?? undefined,
         skillId: userAchievement?.skill_id ?? undefined,
       }
     })

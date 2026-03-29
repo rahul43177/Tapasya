@@ -11,7 +11,7 @@ interface BadgeCardProps {
     rarity: string
   }
   unlocked?: boolean
-  unlockedAt?: string
+  unlockedAt?: string | null
   progress?: { current: number; required: number; percentage: number }
 }
 
@@ -51,7 +51,7 @@ export default function BadgeCard({ achievement, unlocked = false, unlockedAt, p
             sideOffset={5}
           >
             <p className="font-sans text-sm text-on-surface mb-1">{achievement.description}</p>
-            {unlockedAt && (
+            {unlockedAt && unlockedAt !== null && (
               <p className="text-xs font-sans text-on-surface-variant">
                 Unlocked {formatDistanceToNow(new Date(unlockedAt), { addSuffix: true })}
               </p>

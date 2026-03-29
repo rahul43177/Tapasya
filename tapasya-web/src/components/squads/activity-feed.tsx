@@ -10,12 +10,12 @@ interface Activity {
   profile: {
     full_name: string | null
     username: string | null
-  }
+  } | null
   skill: {
     name: string
     icon: string
     color: string
-  }
+  } | null
 }
 
 interface ActivityFeedProps {
@@ -54,6 +54,9 @@ export default function ActivityFeed({ activities, currentUserId }: ActivityFeed
       {/* Activity List */}
       <div className="space-y-3 max-h-[500px] overflow-y-auto">
         {sortedActivities.map((activity) => {
+          // Skip activities without profile or skill data
+          if (!activity.profile || !activity.skill) return null
+
           const displayName = activity.profile.full_name || activity.profile.username || 'Anonymous'
           const isCurrentUser = activity.user_id === currentUserId
           const timeAgo = formatDistanceToNow(new Date(activity.start_time), { addSuffix: true })
