@@ -9,6 +9,20 @@ const PROTECTED_ROUTES = ['/dashboard', '/skills', '/analytics', '/onboarding', 
 // Auth routes — redirect to dashboard if already authenticated
 const AUTH_ROUTES = ['/login', '/signup']
 
+function clearSupabaseAuthCookies(
+  request: NextRequest,
+  response: NextResponse
+) {
+  const supabaseCookies = request.cookies
+    .getAll()
+    .filter((cookie) => cookie.name.startsWith('sb-'))
+
+  for (const cookie of supabaseCookies) {
+    request.cookies.delete(cookie.name)
+    response.cookies.delete(cookie.name)
+  }
+}
+
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -64,7 +78,15 @@ export async function updateSession(request: NextRequest) {
   if (!user && isProtected) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
-    return NextResponse.redirect(redirectUrl)
+    const redirectResponse = NextResponse.redirect(redirectUrl)
+    clearSupabaseAuthCookies(request, redirectResponse)
+    return redirectResponse
+  }
+
+  // Stale or invalid auth cookies should be cleared so the browser can recover
+  // cleanly instead of retrying a broken refresh token on every request.
+  if (!user && isAuthPage) {
+    clearSupabaseAuthCookies(request, supabaseResponse)
   }
 
   // Logged in → trying to access login/signup → redirect to dashboard

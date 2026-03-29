@@ -27,6 +27,19 @@ function isMissingSessionError(error: unknown) {
   return error instanceof Error && error.message.toLowerCase().includes('auth session missing')
 }
 
+function isInvalidRefreshTokenError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false
+  }
+
+  const message = error.message.toLowerCase()
+
+  return (
+    message.includes('invalid refresh token') ||
+    message.includes('refresh token not found')
+  )
+}
+
 export function hasSupabaseAuthCookie(cookies: CookieLike[]) {
   return cookies.some(
     (cookie) =>
@@ -56,7 +69,7 @@ export async function getAuthenticatedUser(
       email: user.email ?? null,
     }
   } catch (error) {
-    if (isMissingSessionError(error)) {
+    if (isMissingSessionError(error) || isInvalidRefreshTokenError(error)) {
       return null
     }
 
