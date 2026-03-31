@@ -29,9 +29,9 @@ export default function ActivityFeed({ activities, currentUserId }: ActivityFeed
     (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
   )
 
-  function formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
+  function formatDuration(durationMinutes: number): string {
+    const hours = Math.floor(durationMinutes / 60)
+    const minutes = Math.floor(durationMinutes % 60)
 
     if (hours > 0) {
       return `${hours}h ${minutes}m`

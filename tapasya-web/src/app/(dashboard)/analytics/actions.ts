@@ -13,7 +13,7 @@ export async function fetchAnalyticsData(period: TimePeriod) {
   const [skillsRes, sessionsRes, allSessionsRes] = await Promise.all([
     supabase
       .from('skills')
-      .select('id, name, icon, color, total_hours, total_minutes, total_sessions, target_hours, current_streak, longest_streak')
+      .select('id, name, icon, color, total_hours, initial_hours, total_minutes, total_sessions, target_hours, current_streak, longest_streak')
       .eq('user_id', user.id)
       .eq('is_active', true),
     supabase

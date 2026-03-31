@@ -18,8 +18,11 @@ export default async function GlobalLeaderboardPage() {
     console.error('Failed to fetch leaderboard:', error)
   }
 
+  // Filter out any entries with null IDs (should not happen, but TypeScript safety)
+  const validUsers = (topUsers || []).filter(u => u.id !== null)
+
   // Check if current user is on the leaderboard
-  const currentUserRank = (topUsers || []).findIndex(u => u.id === user.id)
+  const currentUserRank = validUsers.findIndex(u => u.id === user.id)
   const isCurrentUserOnLeaderboard = currentUserRank !== -1
 
   // Get current user's profile
@@ -85,7 +88,7 @@ export default async function GlobalLeaderboardPage() {
                   App Recorded
                 </p>
                 <p className="font-mono text-3xl font-bold text-on-surface">
-                  {topUsers?.[currentUserRank]?.app_recorded_hours.toFixed(1)}
+                  {(validUsers[currentUserRank]?.app_recorded_hours ?? 0).toFixed(1)}
                 </p>
               </div>
             </div>
@@ -93,7 +96,7 @@ export default async function GlobalLeaderboardPage() {
         )}
 
         {/* Leaderboard */}
-        {(!topUsers || topUsers.length === 0) ? (
+        {validUsers.length === 0 ? (
           <div className="bg-surface-container border border-surface-container-highest text-center py-20">
             <Award className="w-16 h-16 text-on-surface-variant/40 mx-auto mb-4" />
             <p className="font-sans text-sm text-on-surface-variant">
@@ -104,14 +107,14 @@ export default async function GlobalLeaderboardPage() {
             </p>
           </div>
         ) : (
-          <GlobalLeaderboardTable topUsers={topUsers} currentUserId={user.id} />
+          <GlobalLeaderboardTable topUsers={validUsers} currentUserId={user.id} />
         )}
 
         {/* Footer Info */}
-        {topUsers && topUsers.length > 0 && (
+        {validUsers.length > 0 && (
           <div className="mt-6 text-center">
             <p className="text-xs font-sans text-on-surface-variant">
-              Showing top {topUsers.length} practitioners · Updated in real-time
+              Showing top {validUsers.length} practitioners · Updated in real-time
             </p>
           </div>
         )}
