@@ -44,10 +44,8 @@ export default function MemberList({ members, currentUserId }: MemberListProps) 
       {/* Members List */}
       <div className="space-y-3">
         {sortedMembers.map((member) => {
-          // Skip members without profiles
-          if (!member.profile) return null
-
-          const displayName = member.profile.full_name || member.profile.username || 'Anonymous'
+          const displayName =
+            member.profile?.full_name || member.profile?.username || 'Anonymous'
           const isCurrentUser = member.user_id === currentUserId
           const isOwner = (member.role || 'member') === 'owner'
 
@@ -63,7 +61,7 @@ export default function MemberList({ members, currentUserId }: MemberListProps) 
             >
               {/* Avatar */}
               <div className="w-10 h-10 bg-surface-container-highest border border-surface-container-highest flex items-center justify-center flex-shrink-0">
-                {member.profile.avatar_url ? (
+                {member.profile?.avatar_url ? (
                   <img
                     src={member.profile.avatar_url}
                     alt={displayName}
@@ -91,10 +89,10 @@ export default function MemberList({ members, currentUserId }: MemberListProps) 
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-sans text-on-surface-variant">
-                    🔥 {member.profile.current_global_streak}d streak
+                    🔥 {member.profile?.current_global_streak ?? 0}d streak
                   </span>
                   <span className="text-xs font-mono text-on-surface-variant">
-                    {member.profile.total_hours.toFixed(1)}h total
+                    {(member.profile?.total_hours ?? 0).toFixed(1)}h total
                   </span>
                 </div>
               </div>

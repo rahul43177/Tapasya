@@ -29,7 +29,8 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
           </div>
         )}
         {skills.map((skill) => {
-          const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
+          const totalHours = skill.total_hours + skill.initial_hours
+          const pct = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
           return (
             <div key={skill.id} className="px-6 py-4">
               <div className="flex items-center justify-between mb-2">
@@ -38,7 +39,7 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
                   <span className="font-sans text-sm font-medium text-on-surface">{skill.name}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-on-surface-variant">{skill.total_hours.toFixed(1)}/{skill.target_hours}h</span>
+                  <span className="font-mono text-xs text-on-surface-variant">{totalHours.toFixed(1)}/{skill.target_hours}h</span>
                   <div className="flex gap-1.5">
                     <button
                       onClick={handlePlayClick}
