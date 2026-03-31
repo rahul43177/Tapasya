@@ -9,15 +9,15 @@ type LeaderboardMode = 'app_recorded' | 'total'
 
 interface GlobalLeaderboardTableProps {
   topUsers: Array<{
-    id: string
+    id: string | null
     full_name: string | null
     username: string | null
     avatar_url: string | null
-    app_recorded_hours: number
-    total_hours_with_initial: number
-    total_sessions: number
-    current_global_streak: number
-    longest_streak: number
+    app_recorded_hours: number | null
+    total_hours_with_initial: number | null
+    total_sessions: number | null
+    current_global_streak: number | null
+    longest_streak: number | null
   }>
   currentUserId: string
 }
@@ -28,10 +28,10 @@ export default function GlobalLeaderboardTable({
 }: GlobalLeaderboardTableProps) {
   const [mode, setMode] = useState<LeaderboardMode>('app_recorded')
 
-  // Sort by selected mode
+  // Sort by selected mode (handle nulls by defaulting to 0)
   const sortedUsers = [...topUsers].sort((a, b) => {
-    const aHours = mode === 'app_recorded' ? a.app_recorded_hours : a.total_hours_with_initial
-    const bHours = mode === 'app_recorded' ? b.app_recorded_hours : b.total_hours_with_initial
+    const aHours = mode === 'app_recorded' ? (a.app_recorded_hours ?? 0) : (a.total_hours_with_initial ?? 0)
+    const bHours = mode === 'app_recorded' ? (b.app_recorded_hours ?? 0) : (b.total_hours_with_initial ?? 0)
     return bHours - aHours
   })
 
@@ -99,13 +99,13 @@ export default function GlobalLeaderboardTable({
             const displayName = profile.full_name || profile.username || 'Anonymous'
             const isCurrentUser = profile.id === currentUserId
             const displayHours = mode === 'app_recorded'
-              ? profile.app_recorded_hours
-              : profile.total_hours_with_initial
+              ? (profile.app_recorded_hours ?? 0)
+              : (profile.total_hours_with_initial ?? 0)
             const masteryLevel = getMasteryLevel(displayHours)
 
             return (
               <div
-                key={profile.id}
+                key={profile.id ?? `user-${index}`}
                 className={cn(
                   'grid grid-cols-12 gap-4 px-6 py-4 border-b border-surface-container-highest transition-colors',
                   isCurrentUser
@@ -149,7 +149,7 @@ export default function GlobalLeaderboardTable({
                 <div className="col-span-2 flex items-center justify-center">
                   <div className="text-center">
                     <p className="font-mono text-sm text-on-surface">
-                      {profile.current_global_streak}d
+                      {profile.current_global_streak ?? 0}d
                     </p>
                     <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant">
                       Current
@@ -160,7 +160,7 @@ export default function GlobalLeaderboardTable({
                 {/* Sessions */}
                 <div className="col-span-2 flex items-center justify-center">
                   <p className="font-mono text-sm text-on-surface">
-                    {profile.total_sessions}
+                    {profile.total_sessions ?? 0}
                   </p>
                 </div>
 

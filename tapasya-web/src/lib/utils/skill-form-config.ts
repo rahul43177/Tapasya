@@ -20,11 +20,9 @@ export const skillNameSchema = z.object({
 export type SkillNameValues = z.infer<typeof skillNameSchema>
 
 export const initialHoursSchema = z.object({
-  initial_hours: z.coerce
-    .number()
+  initial_hours: z.number()
     .min(0, 'Initial hours cannot be negative')
-    .max(10000, 'Maximum 10,000 initial hours')
-    .default(0),
+    .max(10000, 'Maximum 10,000 initial hours'),
 })
 
 export type InitialHoursValues = z.infer<typeof initialHoursSchema>

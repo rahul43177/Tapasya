@@ -87,10 +87,11 @@ export default async function SquadPage({ params }: SquadPageProps) {
       const userWeeklySessions = (weeklyActivities || []).filter(
         activity => activity.user_id === member.user_id
       )
+      // Duration is stored in MINUTES, so divide by 60 to get hours
       const weeklyHours = userWeeklySessions.reduce(
         (sum, session) => sum + session.duration,
         0
-      ) / 3600
+      ) / 60
 
       return {
         user_id: member.user_id,

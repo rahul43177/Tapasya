@@ -16,6 +16,7 @@ interface Skill {
   icon: string
   color: string
   total_hours: number
+  initial_hours: number
   total_minutes: number
   total_sessions: number
   target_hours: number
