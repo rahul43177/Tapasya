@@ -125,7 +125,7 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
           { label: 'Active Skills', value: skills.length },
           { label: `Avg/Day${timePeriod === 'week' ? ' (7d)' : ''}`, value: (periodTotal / avgDays).toFixed(1) + 'h' },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-surface-container px-6 py-5">
+          <div key={label} className="bg-surface-container px-4 sm:px-6 py-4 sm:py-5">
             <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-1">{label}</p>
             <p className="font-mono text-2xl font-bold text-on-surface">{value}</p>
           </div>
@@ -134,7 +134,7 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Period bar chart */}
-        <div className="bg-surface-container border border-surface-container-highest p-6">
+        <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-6">Hours {periodLabel}</p>
           {periodTotal === 0 ? (
             <div className="h-48 flex items-center justify-center">
@@ -163,21 +163,23 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
         </div>
 
         {/* Skill distribution pie */}
-        <div className="bg-surface-container border border-surface-container-highest p-6">
+        <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-6">Hours by Skill</p>
           {pieData.length === 0 ? (
             <div className="h-48 flex items-center justify-center">
               <p className="font-sans text-sm text-on-surface-variant">No hours logged yet.</p>
             </div>
           ) : (
-            <div className="flex items-center gap-6">
-              <ResponsiveContainer width={160} height={160}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" strokeWidth={0}>
-                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+              <div className="flex justify-center sm:justify-start">
+                <ResponsiveContainer width={160} height={160}>
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" strokeWidth={0}>
+                      {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
               <div className="flex-1 space-y-2">
                 {pieData.map((entry) => (
                   <div key={entry.name} className="flex items-center justify-between">
@@ -196,11 +198,11 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
 
       {/* Skills breakdown table */}
       <div className="bg-surface-container border border-surface-container-highest">
-        <div className="px-6 py-4 border-b border-surface-container-highest">
+        <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Skills Breakdown</p>
         </div>
         {skills.length === 0 ? (
-          <div className="px-6 py-8 text-center">
+          <div className="px-4 sm:px-6 py-8 text-center">
             <p className="font-sans text-sm text-on-surface-variant">No skills yet.</p>
           </div>
         ) : (
@@ -209,12 +211,12 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
               const totalHours = skill.total_hours + skill.initial_hours
               const pct = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
               return (
-                <div key={skill.id} className="px-6 py-4 grid grid-cols-4 lg:grid-cols-6 gap-4 items-center hover:bg-surface-container-high transition-colors">
-                  <Link href={`/skills/${skill.id}/analytics`} className="col-span-2 flex items-center gap-2 cursor-pointer group">
+                <div key={skill.id} className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 items-center hover:bg-surface-container-high transition-colors">
+                  <Link href={`/skills/${skill.id}/analytics`} className="sm:col-span-2 flex items-center gap-2 cursor-pointer group">
                     <span className="text-lg">{skill.icon}</span>
                     <span className="font-sans text-sm font-medium text-on-surface group-hover:text-brand-copper transition-colors">{skill.name}</span>
                   </Link>
-                  <div className="text-right lg:text-left">
+                  <div className="text-left sm:text-right lg:text-left">
                     <p className="font-mono text-sm text-on-surface">{totalHours.toFixed(1)}h</p>
                     <p className="text-[10px] font-sans text-on-surface-variant">{skill.total_sessions} sessions</p>
                   </div>

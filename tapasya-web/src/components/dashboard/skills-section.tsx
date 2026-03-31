@@ -17,7 +17,7 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
   }
   return (
     <div className="bg-surface-container border border-surface-container-highest">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4 border-b border-surface-container-highest">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Skills</p>
         <Link href="/skills" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">Manage →</Link>
       </div>
@@ -33,12 +33,12 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
           const pct = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
           return (
             <div key={skill.id} className="px-6 py-4">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{skill.icon}</span>
                   <span className="font-sans text-sm font-medium text-on-surface">{skill.name}</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="font-mono text-xs text-on-surface-variant">{totalHours.toFixed(1)}/{skill.target_hours}h</span>
                   <div className="flex gap-1.5">
                     <button

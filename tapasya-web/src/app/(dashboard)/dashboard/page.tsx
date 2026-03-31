@@ -83,11 +83,11 @@ export default async function DashboardPage() {
   const motivationalMessage = getTodayMessage(todayHours, dailyGoalHours, streak)
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-8">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">{greeting}</p>
-        <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">{firstName}</h1>
+        <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">{firstName}</h1>
       </div>
 
       {/* Streak Warning */}
@@ -103,20 +103,20 @@ export default async function DashboardPage() {
       </div>
 
       {/* Today's Tapa — hero section */}
-      <div className="bg-surface-container border border-surface-container-highest p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Today&apos;s Tapa</p>
             {streak > 0 && (
               <p className="font-sans text-sm text-secondary mt-1">🔥 {streak}-day streak</p>
             )}
           </div>
-          <div className="text-right">
+          <div className="sm:text-right">
             <p className="font-mono text-3xl font-bold text-on-surface">{(todayMinutes / 60).toFixed(1)}</p>
             <p className="text-xs font-sans text-on-surface-variant">/ {(dailyGoalMinutes / 60).toFixed(1)} hrs goal</p>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <ProgressRing percent={todayPercent} size={80} stroke={6} />
           <div className="flex-1">
             <div className="h-1.5 bg-surface-container-highest mb-2">
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
 
           {/* Recent sessions */}
           <div className="bg-surface-container border border-surface-container-highest">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4 border-b border-surface-container-highest">
               <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Recent Sessions</p>
               <Link href="/sessions" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">View all →</Link>
             </div>
@@ -183,7 +183,7 @@ export default async function DashboardPage() {
               {recentSessions.map((session) => {
                 const skill = Array.isArray(session.skills) ? session.skills[0] : session.skills
                 return (
-                  <div key={session.id} className="px-6 py-3 flex items-center justify-between">
+                  <div key={session.id} className="px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="text-base">{skill?.icon ?? '⏱'}</span>
                       <div>
@@ -193,7 +193,7 @@ export default async function DashboardPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="sm:text-right">
                       <p className="font-mono text-sm text-on-surface">{session.duration}m</p>
                       {session.focus_rating && (
                         <p className="text-[10px] font-sans text-secondary">{'★'.repeat(session.focus_rating)}</p>

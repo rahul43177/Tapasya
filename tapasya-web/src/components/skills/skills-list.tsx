@@ -49,8 +49,8 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
         const level = getMasteryLevel(totalHours)
 
         return (
-          <div key={skill.id} className="bg-surface-container p-6">
-            <div className="flex items-start justify-between mb-4">
+          <div key={skill.id} className="bg-surface-container p-4 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 flex items-center justify-center text-xl" style={{ backgroundColor: `${skill.color}20`, border: `1px solid ${skill.color}40` }}>
                   {skill.icon}
@@ -60,7 +60,7 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
                   <p className="text-xs font-sans text-on-surface-variant">{level}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Link href={`/skills/${skill.id}/analytics`} className="px-3 py-1.5 text-xs font-sans text-on-surface-variant border border-surface-container-highest hover:border-brand-copper hover:text-brand-copper transition-colors">
                   Analytics
                 </Link>
@@ -78,7 +78,7 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4">
               <div>
                 <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-0.5">Total Hours</p>
                 <p className="font-mono text-lg font-bold text-on-surface">{totalHours.toFixed(1)}</p>
@@ -95,7 +95,7 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
 
             {/* Progress bar */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-1.5">
                 <span className="text-[10px] font-sans text-on-surface-variant">{pct}% toward {skill.target_hours.toLocaleString()}h mastery</span>
                 <span className="text-[10px] font-mono text-on-surface-variant">{hoursToNext.toFixed(1)}h remaining</span>
               </div>

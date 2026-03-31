@@ -80,7 +80,7 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-surface-container-highest flex items-center justify-around px-4 py-3 z-40">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-surface-container-highest flex items-center gap-2 px-3 py-2 z-40 overflow-x-auto">
         {NAV_ITEMS.map(({ href, label, icon }) => {
           const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
@@ -88,14 +88,14 @@ export default function Sidebar({ displayName, totalHours, role }: SidebarProps)
               key={href}
               href={href}
               className={cn(
-                'flex flex-col items-center gap-1 transition-colors',
+                'flex flex-col items-center gap-1 transition-colors flex-shrink-0 min-w-[68px]',
                 isActive ? 'text-brand-copper' : 'text-on-surface-variant opacity-60'
               )}
             >
               <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
                 {icon}
               </span>
-              <span className="text-[10px] uppercase tracking-widest font-sans">{label}</span>
+              <span className="text-[9px] uppercase tracking-widest font-sans whitespace-nowrap">{label}</span>
             </Link>
           )
         })}

@@ -42,12 +42,12 @@ export default async function SessionsPage({ searchParams }: SessionsPageProps) 
   const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE)
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
         <div>
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">History</p>
-          <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">Sessions</h1>
+          <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">Sessions</h1>
         </div>
         <Link href="/dashboard" className="text-xs font-sans text-on-surface-variant hover:text-on-surface transition-colors">← Dashboard</Link>
       </div>

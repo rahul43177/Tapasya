@@ -66,13 +66,13 @@ export default function SessionsList({
   return (
     <div>
       {/* Filter bar */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <label className="text-xs uppercase tracking-widest font-sans text-on-surface-variant whitespace-nowrap">Skill</label>
           <select
             value={currentSkillId}
             onChange={handleSkillChange}
-            className="px-3 py-2 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm focus:outline-none focus:border-outline transition-colors appearance-none min-w-[160px]"
+            className="w-full sm:w-auto px-3 py-2 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm focus:outline-none focus:border-outline transition-colors appearance-none sm:min-w-[160px]"
           >
             <option value="">All skills</option>
             {skills.map(skill => (
@@ -80,7 +80,7 @@ export default function SessionsList({
             ))}
           </select>
         </div>
-        <p className="text-xs font-sans text-on-surface-variant ml-auto">
+        <p className="text-xs font-sans text-on-surface-variant sm:ml-auto">
           {totalCount} session{totalCount !== 1 ? 's' : ''}
         </p>
       </div>
@@ -146,7 +146,7 @@ export default function SessionsList({
                   </div>
 
                   {/* Notes */}
-                  <p className="font-sans text-xs text-on-surface-variant truncate max-w-xs">
+                  <p className="font-sans text-xs text-on-surface-variant break-words md:truncate md:max-w-xs">
                     {session.notes ?? <span className="opacity-30">—</span>}
                   </p>
                 </div>

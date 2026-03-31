@@ -15,13 +15,13 @@ export default async function SkillsPage() {
     .order('order', { ascending: true })
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Your</p>
-          <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">Skills</h1>
+          <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">Skills</h1>
         </div>
-        <Link href="/skills/new" className="flex items-center gap-2 px-4 py-2.5 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors">
+        <Link href="/skills/new" className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors">
           + New Skill
         </Link>
       </div>

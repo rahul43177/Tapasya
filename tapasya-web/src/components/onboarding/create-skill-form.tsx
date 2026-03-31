@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
+import { recalculateProfileTotalHours } from '@/lib/utils/profile'
 import { EMOJI_OPTIONS, TARGET_HOURS, COLORS, createSkillSchema, type CreateSkillValues } from '@/lib/utils/skill-form-config'
 
 const inputClass = 'w-full px-4 py-3 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:border-outline transition-colors disabled:opacity-50'
@@ -52,6 +53,8 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
       setServerError(error.message)
       return
     }
+
+    await recalculateProfileTotalHours(userId)
 
     router.push('/dashboard')
     router.refresh()

@@ -32,7 +32,7 @@ export default function TimeOfDayChart({ sessions }: TimeOfDayChartProps) {
   const showEveryNHours = typeof window !== 'undefined' && window.innerWidth < 768 ? 6 : 3
 
   return (
-    <div className="bg-surface-container border border-surface-container-highest p-6">
+    <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
       <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-6">
         Practice by Time of Day
       </p>

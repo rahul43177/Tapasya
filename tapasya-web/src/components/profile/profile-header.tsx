@@ -19,20 +19,20 @@ export default function ProfileHeader({ userId, fullName, username, avatarUrl, c
 
   return (
     <>
-      <div className="bg-surface-container border border-surface-container-highest p-8 mb-6">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-6">
+      <div className="bg-surface-container border border-surface-container-highest p-5 sm:p-8 mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
             {/* Avatar */}
-            <div className="w-24 h-24 bg-surface-container-highest flex items-center justify-center overflow-hidden">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-surface-container-highest flex items-center justify-center overflow-hidden">
               {avatarUrl ? (
                 <Image src={avatarUrl} alt={fullName ?? 'Profile'} width={96} height={96} className="w-full h-full object-cover" />
               ) : (
-                <User className="w-12 h-12 text-on-surface-variant" />
+                <User className="w-10 h-10 sm:w-12 sm:h-12 text-on-surface-variant" />
               )}
             </div>
             {/* Name and Info */}
             <div>
-              <h1 className="font-newsreader text-3xl italic font-bold text-on-surface mb-1">
+              <h1 className="font-newsreader text-2xl sm:text-3xl italic font-bold text-on-surface mb-1">
                 {fullName}
               </h1>
               {username && (
@@ -45,7 +45,7 @@ export default function ProfileHeader({ userId, fullName, username, avatarUrl, c
           </div>
           <button
             onClick={() => setEditModalOpen(true)}
-            className="px-4 py-2 bg-brand-copper hover:bg-primary-container text-white font-sans text-sm font-semibold transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-brand-copper hover:bg-primary-container text-white font-sans text-sm font-semibold transition-colors"
           >
             Edit Profile
           </button>

@@ -32,13 +32,13 @@ export default function WeekAtGlance({ sessions }: WeekAtGlanceProps) {
 
   return (
     <div className="bg-surface-container border border-surface-container-highest">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-surface-container-highest">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4 border-b border-surface-container-highest">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Week at a Glance</p>
         <Link href="/analytics" className="text-xs font-sans text-brand-copper hover:text-primary transition-colors">
           View detailed analytics →
         </Link>
       </div>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {weekTotal === 0 ? (
           <div className="h-32 flex flex-col items-center justify-center">
             <p className="font-sans text-sm text-on-surface-variant mb-1">No sessions this week yet</p>

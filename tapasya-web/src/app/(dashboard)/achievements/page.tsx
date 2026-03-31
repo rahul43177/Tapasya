@@ -41,11 +41,11 @@ export default async function AchievementsPage({ searchParams }: AchievementsPag
   const categories = ['milestone', 'streak', 'consistency', 'mastery', 'special']
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-8">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Your</p>
-        <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">Achievements</h1>
+        <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">Achievements</h1>
       </div>
 
       {/* Stats Summary */}

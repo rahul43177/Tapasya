@@ -64,13 +64,13 @@ export default async function SquadsPage() {
   const squads = squadsWithCounts.filter((squad): squad is NonNullable<typeof squad> => squad !== null)
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
             <div>
-              <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mb-2">
+              <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mb-2">
                 Your Squads
               </h1>
               <p className="font-sans text-sm text-on-surface-variant">
@@ -79,17 +79,17 @@ export default async function SquadsPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Link
                 href="/squads/join"
-                className="px-4 py-2.5 border border-surface-container-highest text-on-surface font-sans text-sm font-semibold hover:border-outline transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto px-4 py-2.5 border border-surface-container-highest text-on-surface font-sans text-sm font-semibold hover:border-outline transition-colors flex items-center gap-2 justify-center"
               >
                 <UserPlus className="w-4 h-4" />
                 Join Squad
               </Link>
               <Link
                 href="/squads/new"
-                className="px-4 py-2.5 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto px-4 py-2.5 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors flex items-center gap-2 justify-center"
               >
                 <Plus className="w-4 h-4" />
                 Create Squad
@@ -126,16 +126,16 @@ export default async function SquadsPage() {
             <p className="font-sans text-sm text-on-surface-variant mb-8 text-center max-w-md">
               Create your first squad to start building accountability with friends, or join an existing squad with an invite code.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Link
                 href="/squads/join"
-                className="px-6 py-3 border border-surface-container-highest text-on-surface font-sans text-sm font-semibold hover:border-outline transition-colors"
+                className="w-full sm:w-auto px-6 py-3 border border-surface-container-highest text-on-surface font-sans text-sm font-semibold hover:border-outline transition-colors text-center"
               >
                 Join Squad
               </Link>
               <Link
                 href="/squads/new"
-                className="px-6 py-3 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors"
+                className="w-full sm:w-auto px-6 py-3 bg-brand-copper text-white font-sans text-sm font-semibold hover:bg-primary-container transition-colors text-center"
               >
                 Create Squad
               </Link>

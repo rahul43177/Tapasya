@@ -420,7 +420,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
   // Milestone celebration screen
   if (unlockedMilestone) {
     return (
-      <div className="bg-surface-container border border-surface-container-highest p-6 text-center">
+      <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6 text-center">
         <p className="text-4xl mb-4">{unlockedMilestone.emoji}</p>
         <p className="text-xs uppercase tracking-widest font-sans text-secondary mb-2">Milestone Unlocked</p>
         <p className="font-newsreader text-3xl italic font-bold text-on-surface mb-1">{unlockedMilestone.label}</p>
@@ -428,7 +428,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
         <p className="font-sans text-xs text-on-surface-variant mb-8">in {savedSkillName}</p>
         <button
           onClick={handleMilestoneDismiss}
-          className="px-8 py-3 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors"
+          className="w-full sm:w-auto px-8 py-3 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors"
         >
           Continue the Practice
         </button>
@@ -439,7 +439,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
   // Save / rating screen
   if (showRating) {
     return (
-      <div className="bg-surface-container border border-surface-container-highest p-6">
+      <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
         <p className={cn('text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-4', pomodoroComplete ? 'text-secondary' : '')}>
           {pomodoroComplete ? 'Pomodoro complete!' : 'Session complete'}
         </p>
@@ -453,7 +453,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
 
         <div className="mb-4">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-2">Focus quality</p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {RATINGS.map(r => (
               <button key={r} onClick={() => setFocusRating(r)} className={cn('w-9 h-9 font-sans text-sm transition-colors', r <= focusRating ? 'bg-brand-copper text-white' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-high')}>
                 {r}
@@ -469,11 +469,11 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
 
         {saveError && <p className="mb-4 text-xs font-sans text-error">{saveError}</p>}
 
-        <div className="flex gap-3">
-          <button onClick={handleDiscard} disabled={saving} className="px-4 py-2 font-sans text-sm text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-50">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button onClick={handleDiscard} disabled={saving} className="w-full sm:w-auto px-4 py-2 font-sans text-sm text-on-surface-variant hover:text-on-surface transition-colors disabled:opacity-50">
             Discard
           </button>
-          <button onClick={handleSave} disabled={saving} className="flex-1 flex items-center justify-center gap-2 py-3 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors disabled:opacity-50">
+          <button onClick={handleSave} disabled={saving} className="w-full sm:flex-1 flex items-center justify-center gap-2 py-3 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors disabled:opacity-50">
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             Save Session
           </button>
@@ -483,9 +483,9 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
   }
 
   return (
-    <div className="bg-surface-container border border-surface-container-highest p-6">
+    <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
       {/* Mode toggle */}
-      <div className="flex mb-6 border border-surface-container-highest">
+      <div className="flex flex-col sm:flex-row mb-6 border border-surface-container-highest">
         
         <button
           onClick={() => handleModeSwitch('pomodoro')}
@@ -515,7 +515,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
 
       {/* Pomodoro preset selector */}
       {mode === 'pomodoro' && timerState === 'idle' && (
-        <div className="flex gap-2 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
           {POMODORO_PRESETS.map(({ label, value }) => (
             <button
               key={value}
@@ -550,7 +550,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
 
       {/* Timer display */}
       <div className="text-center mb-6 py-4">
-        <p className="font-mono text-6xl font-bold text-on-surface tracking-tight">
+        <p className="font-mono text-4xl sm:text-6xl font-bold text-on-surface tracking-tight">
           {displayTime}
         </p>
         {timerState !== 'idle' && selectedSkill && (
@@ -562,28 +562,28 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
       </div>
 
       {/* Controls */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         {timerState === 'idle' && (
-          <button onClick={handleStart} className="flex-1 py-4 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors">
+          <button onClick={handleStart} className="w-full sm:flex-1 py-4 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors">
             ▶ Start Focus
           </button>
         )}
         {timerState === 'running' && (
           <>
-            <button onClick={handlePause} className="flex-1 py-4 bg-surface-container-highest text-on-surface font-sans font-semibold text-sm hover:bg-surface-bright transition-colors">
+            <button onClick={handlePause} className="w-full sm:flex-1 py-4 bg-surface-container-highest text-on-surface font-sans font-semibold text-sm hover:bg-surface-bright transition-colors">
               ⏸ Pause
             </button>
-            <button onClick={handleStop} className="px-6 py-4 border border-outline-variant text-on-surface-variant font-sans text-sm hover:border-outline hover:text-on-surface transition-colors">
+            <button onClick={handleStop} className="w-full sm:w-auto px-6 py-4 border border-outline-variant text-on-surface-variant font-sans text-sm hover:border-outline hover:text-on-surface transition-colors">
               ■ Stop
             </button>
           </>
         )}
         {timerState === 'paused' && (
           <>
-            <button onClick={handleResume} className="flex-1 py-4 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors">
+            <button onClick={handleResume} className="w-full sm:flex-1 py-4 bg-brand-copper text-white font-sans font-semibold text-sm hover:bg-primary-container transition-colors">
               ▶ Resume
             </button>
-            <button onClick={handleStop} className="px-6 py-4 border border-outline-variant text-on-surface-variant font-sans text-sm hover:border-outline hover:text-on-surface transition-colors">
+            <button onClick={handleStop} className="w-full sm:w-auto px-6 py-4 border border-outline-variant text-on-surface-variant font-sans text-sm hover:border-outline hover:text-on-surface transition-colors">
               ■ Stop
             </button>
           </>

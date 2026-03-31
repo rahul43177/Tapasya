@@ -26,7 +26,7 @@ export default async function AchievementsSection() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h2 className="font-newsreader text-2xl italic font-bold text-on-surface">Achievements</h2>
           <p className="font-sans text-sm text-on-surface-variant mt-1">

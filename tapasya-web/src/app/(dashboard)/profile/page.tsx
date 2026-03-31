@@ -26,7 +26,7 @@ export default async function ProfilePage() {
   const avgPerDay = totalHours > 0 ? (totalHours / daysSinceJoining).toFixed(1) + 'h' : '0h'
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Profile Header */}
       <ProfileHeader
         userId={user.id}
@@ -38,7 +38,7 @@ export default async function ProfilePage() {
 
       {/* Stats Overview */}
       <div className="bg-surface-container border border-surface-container-highest mb-6">
-        <div className="px-6 py-4 border-b border-surface-container-highest">
+        <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Statistics</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-surface-container-highest">
@@ -52,7 +52,7 @@ export default async function ProfilePage() {
             { label: 'Daily Goal', value: `${((profile?.daily_goal_minutes ?? 120) / 60).toFixed(1)}h`, sublabel: 'Target per day' },
             { label: 'Avg/Day', value: avgPerDay, sublabel: 'Since joining' },
           ].map(({ label, value, sublabel }) => (
-            <div key={label} className="bg-surface-container px-6 py-5">
+            <div key={label} className="bg-surface-container px-4 sm:px-6 py-4 sm:py-5">
               <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-1">{label}</p>
               <p className="font-mono text-2xl font-bold text-on-surface mb-1">{value}</p>
               <p className="text-[10px] font-sans text-on-surface-variant">{sublabel}</p>
@@ -63,11 +63,11 @@ export default async function ProfilePage() {
 
       {/* Active Skills */}
       <div className="bg-surface-container border border-surface-container-highest mb-6">
-        <div className="px-6 py-4 border-b border-surface-container-highest">
+        <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Active Skills</p>
         </div>
         {skills.length === 0 ? (
-          <div className="px-6 py-8 text-center">
+          <div className="px-4 sm:px-6 py-8 text-center">
             <p className="font-sans text-sm text-on-surface-variant">No skills yet. Start by adding your first skill!</p>
           </div>
         ) : (
@@ -75,8 +75,8 @@ export default async function ProfilePage() {
             {skills.map((skill) => {
               const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
               return (
-                <Link key={skill.id} href={`/skills/${skill.id}/analytics`} className="block px-6 py-4 hover:bg-surface-container-high transition-colors">
-                  <div className="flex items-center justify-between mb-2">
+                <Link key={skill.id} href={`/skills/${skill.id}/analytics`} className="block px-4 sm:px-6 py-4 hover:bg-surface-container-high transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{skill.icon}</span>
                       <span className="font-sans text-sm font-medium text-on-surface hover:text-brand-copper transition-colors">{skill.name}</span>
