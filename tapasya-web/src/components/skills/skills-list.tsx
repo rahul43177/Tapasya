@@ -43,9 +43,10 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
   return (
     <div className="space-y-px bg-surface-container-highest">
       {skills.map((skill) => {
-        const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
-        const hoursToNext = skill.target_hours - skill.total_hours
-        const level = getMasteryLevel(skill.total_hours)
+        const totalHours = skill.total_hours + skill.initial_hours
+        const pct = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
+        const hoursToNext = skill.target_hours - totalHours
+        const level = getMasteryLevel(totalHours)
 
         return (
           <div key={skill.id} className="bg-surface-container p-6">
@@ -79,8 +80,8 @@ export default function SkillsList({ skills, userId }: SkillsListProps) {
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div>
-                <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-0.5">Hours</p>
-                <p className="font-mono text-lg font-bold text-on-surface">{skill.total_hours.toFixed(1)}</p>
+                <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-0.5">Total Hours</p>
+                <p className="font-mono text-lg font-bold text-on-surface">{totalHours.toFixed(1)}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-0.5">Sessions</p>

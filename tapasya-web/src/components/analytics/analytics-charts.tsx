@@ -11,6 +11,7 @@ interface Skill {
   icon: string
   color: string
   total_hours: number
+  initial_hours: number
   total_minutes: number
   total_sessions: number
   target_hours: number
@@ -105,10 +106,10 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
     }
   }
 
-  // Pie chart — hours per skill
-  const pieData = skills.filter(s => s.total_hours > 0).map(s => ({
+  // Pie chart — hours per skill (including initial hours)
+  const pieData = skills.filter(s => (s.total_hours + s.initial_hours) > 0).map(s => ({
     name: `${s.icon} ${s.name}`,
-    value: parseFloat(s.total_hours.toFixed(2)),
+    value: parseFloat((s.total_hours + s.initial_hours).toFixed(2)),
     color: s.color,
   }))
 
@@ -205,7 +206,8 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
         ) : (
           <div className="divide-y divide-surface-container-highest">
             {skills.map(skill => {
-              const pct = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
+              const totalHours = skill.total_hours + skill.initial_hours
+              const pct = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
               return (
                 <div key={skill.id} className="px-6 py-4 grid grid-cols-4 lg:grid-cols-6 gap-4 items-center hover:bg-surface-container-high transition-colors">
                   <Link href={`/skills/${skill.id}/analytics`} className="col-span-2 flex items-center gap-2 cursor-pointer group">
@@ -213,7 +215,7 @@ export default function AnalyticsCharts({ skills, sessions, totalSessionMinutes,
                     <span className="font-sans text-sm font-medium text-on-surface group-hover:text-brand-copper transition-colors">{skill.name}</span>
                   </Link>
                   <div className="text-right lg:text-left">
-                    <p className="font-mono text-sm text-on-surface">{skill.total_hours.toFixed(1)}h</p>
+                    <p className="font-mono text-sm text-on-surface">{totalHours.toFixed(1)}h</p>
                     <p className="text-[10px] font-sans text-on-surface-variant">{skill.total_sessions} sessions</p>
                   </div>
                   <div className="hidden lg:block">

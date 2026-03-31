@@ -121,6 +121,13 @@ export type Database = {
             foreignKeyName: "focus_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "focus_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -207,6 +214,7 @@ export type Database = {
           description: string | null
           icon: string
           id: string
+          initial_hours: number
           is_active: boolean
           last_practice_date: string | null
           longest_streak: number
@@ -227,6 +235,7 @@ export type Database = {
           description?: string | null
           icon?: string
           id?: string
+          initial_hours?: number
           is_active?: boolean
           last_practice_date?: string | null
           longest_streak?: number
@@ -247,6 +256,7 @@ export type Database = {
           description?: string | null
           icon?: string
           id?: string
+          initial_hours?: number
           is_active?: boolean
           last_practice_date?: string | null
           longest_streak?: number
@@ -265,6 +275,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skills_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
             referencedColumns: ["id"]
           },
           {
@@ -311,6 +328,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
             referencedColumns: ["id"]
           },
           {
@@ -365,6 +389,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
             referencedColumns: ["id"]
           },
           {
@@ -427,6 +458,13 @@ export type Database = {
             foreignKeyName: "user_achievements_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -444,6 +482,45 @@ export type Database = {
           total_hours: number | null
           total_sessions: number | null
           username: string | null
+        }
+        Relationships: []
+      }
+      global_leaderboard_with_initial: {
+        Row: {
+          app_recorded_hours: number | null
+          avatar_url: string | null
+          current_global_streak: number | null
+          full_name: string | null
+          id: string | null
+          is_public_profile: boolean | null
+          longest_streak: number | null
+          total_hours_with_initial: number | null
+          total_sessions: number | null
+          username: string | null
+        }
+        Insert: {
+          app_recorded_hours?: number | null
+          avatar_url?: string | null
+          current_global_streak?: number | null
+          full_name?: string | null
+          id?: string | null
+          is_public_profile?: boolean | null
+          longest_streak?: number | null
+          total_hours_with_initial?: never
+          total_sessions?: number | null
+          username?: string | null
+        }
+        Update: {
+          app_recorded_hours?: number | null
+          avatar_url?: string | null
+          current_global_streak?: number | null
+          full_name?: string | null
+          id?: string | null
+          is_public_profile?: boolean | null
+          longest_streak?: number | null
+          total_hours_with_initial?: never
+          total_sessions?: number | null
+          username?: string | null
         }
         Relationships: []
       }
@@ -471,6 +548,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "global_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "global_leaderboard_with_initial"
             referencedColumns: ["id"]
           },
           {

@@ -71,8 +71,9 @@ export default async function SkillAnalyticsPage({ params }: Props) {
   })
   const bestDay = Object.entries(dayStats).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'N/A'
 
-  // Progress percentage
-  const progressPercent = Math.min(Math.round((skill.total_hours / skill.target_hours) * 100), 100)
+  // Progress percentage (using total hours including initial)
+  const totalHours = skill.total_hours + skill.initial_hours
+  const progressPercent = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
 
   return (
     <div className="min-h-screen px-6 lg:px-10 py-8">
@@ -104,7 +105,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
           <div className="relative">
             <ProgressRing percent={progressPercent} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="font-mono text-3xl font-bold text-on-surface">{skill.total_hours.toFixed(1)}h</p>
+              <p className="font-mono text-3xl font-bold text-on-surface">{totalHours.toFixed(1)}h</p>
               <p className="text-xs text-on-surface-variant">/ {skill.target_hours}h</p>
             </div>
           </div>
@@ -142,7 +143,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
           {[
             { label: 'This Week', value: `${weekHours.toFixed(1)}h` },
             { label: 'This Month', value: `${monthHours.toFixed(1)}h` },
-            { label: 'All Time', value: `${skill.total_hours.toFixed(1)}h` },
+            { label: 'All Time', value: `${totalHours.toFixed(1)}h` },
             { label: 'Longest Streak', value: `${skill.longest_streak ?? 0}d` },
             { label: 'Best Day', value: bestDay },
             { label: 'Progress', value: `${progressPercent}%` },

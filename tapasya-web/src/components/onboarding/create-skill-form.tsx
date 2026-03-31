@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
-import { EMOJI_OPTIONS, TARGET_HOURS, COLORS, skillNameSchema, type SkillNameValues } from '@/lib/utils/skill-form-config'
+import { EMOJI_OPTIONS, TARGET_HOURS, COLORS, createSkillSchema, type CreateSkillValues } from '@/lib/utils/skill-form-config'
 
 const inputClass = 'w-full px-4 py-3 bg-surface-container border border-surface-container-highest text-on-surface font-sans text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:border-outline transition-colors disabled:opacity-50'
 
@@ -18,6 +18,7 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
   const [selectedColor, setSelectedColor] = useState('#E05C00')
   const [selectedTarget, setSelectedTarget] = useState(10000)
   const [dailyGoal, setDailyGoal] = useState(120)
+  const [initialHours, setInitialHours] = useState(0)
   const [serverError, setServerError] = useState<string | null>(null)
   const [skipping, setSkipping] = useState(false)
 
@@ -25,11 +26,15 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SkillNameValues>({
-    resolver: zodResolver(skillNameSchema),
+  } = useForm<CreateSkillValues>({
+    resolver: zodResolver(createSkillSchema),
+    defaultValues: {
+      name: '',
+      initial_hours: 0,
+    },
   })
 
-  async function onSubmit(values: SkillNameValues) {
+  async function onSubmit(values: CreateSkillValues) {
     setServerError(null)
     const supabase = createClient()
 
@@ -40,6 +45,7 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
       color: selectedColor,
       target_hours: selectedTarget,
       daily_goal_minutes: dailyGoal,
+      initial_hours: initialHours,
     })
 
     if (error) {
@@ -190,6 +196,30 @@ export default function CreateSkillForm({ userId }: { userId: string }) {
             <span className="text-xs font-sans text-on-surface-variant">15m</span>
             <span className="text-xs font-sans text-on-surface-variant">8h</span>
           </div>
+        </div>
+
+        {/* Initial hours (optional) */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">
+              Starting Hours <span className="text-on-surface-variant/60">(Optional)</span>
+            </p>
+            <p className="font-mono text-sm text-secondary">{initialHours.toFixed(1)}h</p>
+          </div>
+          <input
+            type="number"
+            min={0}
+            max={10000}
+            step={0.5}
+            value={initialHours}
+            onChange={(e) => setInitialHours(Math.max(0, Math.min(10000, Number(e.target.value))))}
+            disabled={isLoading}
+            className={inputClass}
+            placeholder="0"
+          />
+          <p className="mt-1.5 text-xs font-sans text-on-surface-variant/60">
+            Time already spent on this skill before joining Tapasya
+          </p>
         </div>
 
         {/* Actions */}

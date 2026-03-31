@@ -330,10 +330,21 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
         longest_streak: Math.max(skill.longest_streak ?? 0, skillStreak.longest),
       }).eq('id', selectedSkillId)
 
-      // 6. Update profile
+      // 6. Recalculate profile total_hours including initial hours from all skills
+      const { data: allSkills } = await supabase
+        .from('skills')
+        .select('total_hours, initial_hours')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+
+      const recalculatedTotalHours = (allSkills || []).reduce(
+        (sum, skill) => sum + (skill.total_hours + skill.initial_hours),
+        0
+      )
+
       await supabase.from('profiles').update({
         total_sessions: prevTotalSessions + 1,
-        total_hours: prevTotalHours + durationMinutes / 60,
+        total_hours: recalculatedTotalHours,
         current_global_streak: globalStreak.current,
         longest_streak: Math.max(prevLongestStreak, globalStreak.longest),
         last_active_at: now.toISOString(),
@@ -349,7 +360,7 @@ export default function FocusTimer({ skills, userId }: FocusTimerProps) {
           startTime: startTime.toISOString(),
           skillTotalHours: newHours,
           skillTotalSessions: skill.total_sessions + 1,
-          globalTotalHours: prevTotalHours + durationMinutes / 60,
+          globalTotalHours: recalculatedTotalHours,
           globalStreak: globalStreak.current,
           skillStreak: skillStreak.current,
         }
