@@ -23,14 +23,14 @@ export default async function EditSkillPage({ params }: Props) {
   if (!skill) redirect('/skills')
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       <div className="mb-8">
         <Link href="/skills" className="text-xs font-sans text-on-surface-variant hover:text-on-surface transition-colors">
           ← Back to Skills
         </Link>
         <div className="mt-4">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Editing</p>
-          <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">
+          <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">
             {skill.icon} {skill.name}
           </h1>
         </div>

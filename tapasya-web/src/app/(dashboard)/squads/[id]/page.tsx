@@ -65,6 +65,14 @@ export default async function SquadPage({ params }: SquadPageProps) {
     console.error('Failed to fetch members:', membersError)
   }
 
+  // Log members with null profiles for debugging
+  const membersWithNullProfiles = (members || []).filter(m => m.profile === null)
+  if (membersWithNullProfiles.length > 0) {
+    console.warn(`⚠️ ${membersWithNullProfiles.length} member(s) have null profiles:`,
+      membersWithNullProfiles.map(m => ({ user_id: m.user_id, role: m.role }))
+    )
+  }
+
   // Get current week range for leaderboard
   const { start: weekStart, end: weekEnd } = getCurrentWeekRangeISO()
 
@@ -148,7 +156,7 @@ export default async function SquadPage({ params }: SquadPageProps) {
         </Link>
 
         {/* Squad Header */}
-        <div className="mb-8 p-6 bg-surface-container border border-surface-container-highest">
+        <div className="mb-8 p-4 sm:p-6 bg-surface-container border border-surface-container-highest">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex-1">
               <h1 className="font-newsreader text-3xl md:text-4xl italic font-bold text-on-surface mb-2">

@@ -29,10 +29,10 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   const totalSessionMinutes = (allSessionsRes.data ?? []).reduce((sum, s) => sum + (s.duration ?? 0), 0)
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       <div className="mb-8">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Your</p>
-        <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">Analytics</h1>
+        <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">Analytics</h1>
       </div>
 
       <AnalyticsPageClient

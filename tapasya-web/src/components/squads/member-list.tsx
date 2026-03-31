@@ -41,6 +41,17 @@ export default function MemberList({ members, currentUserId }: MemberListProps) 
         </span>
       </div>
 
+      {/* Warning for members without profiles */}
+      {members.filter(m => m.profile === null).length > 0 && (
+        <div className="mb-4 p-3 bg-brand-copper/10 border-l-2 border-brand-copper text-xs font-sans text-on-surface">
+          <p className="font-semibold mb-1">⚠️ Some members are not fully visible</p>
+          <p className="text-xs text-on-surface-variant">
+            {members.filter(m => m.profile === null).length} member(s) haven't completed profile setup.
+            They'll appear here once their profile is created.
+          </p>
+        </div>
+      )}
+
       {/* Members List */}
       <div className="space-y-3">
         {sortedMembers.map((member) => {

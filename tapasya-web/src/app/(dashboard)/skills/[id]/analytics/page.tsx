@@ -76,22 +76,22 @@ export default async function SkillAnalyticsPage({ params }: Props) {
   const progressPercent = Math.min(Math.round((totalHours / skill.target_hours) * 100), 100)
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Header */}
       <div className="mb-8">
         <Link href="/skills" className="text-xs font-sans text-on-surface-variant hover:text-on-surface transition-colors">
           ← Back to Skills
         </Link>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Analytics</p>
-            <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mt-1">
+            <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mt-1">
               {skill.icon} {skill.name}
             </h1>
           </div>
           <Link
             href={`/skills/${id}`}
-            className="px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-sans text-sm font-semibold transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-sans text-sm font-semibold transition-colors text-center"
           >
             Edit Skill
           </Link>
@@ -99,7 +99,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
       </div>
 
       {/* Hero Section - Progress Overview */}
-      <div className="bg-surface-container border border-surface-container-highest p-8 mb-6">
+      <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6 mb-6">
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
           {/* Progress Ring */}
           <div className="relative">
@@ -111,7 +111,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
           </div>
 
           {/* Key Metrics */}
-          <div className="flex-1 grid grid-cols-2 gap-4">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-1">Current Streak</p>
               <p className="font-mono text-2xl font-bold text-on-surface">
@@ -136,7 +136,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
 
       {/* Stats Grid */}
       <div className="bg-surface-container border border-surface-container-highest mb-6">
-        <div className="px-6 py-4 border-b border-surface-container-highest">
+        <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
           <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Detailed Statistics</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-surface-container-highest">
@@ -148,7 +148,7 @@ export default async function SkillAnalyticsPage({ params }: Props) {
             { label: 'Best Day', value: bestDay },
             { label: 'Progress', value: `${progressPercent}%` },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-surface-container px-6 py-4">
+            <div key={label} className="bg-surface-container px-4 sm:px-6 py-4">
               <p className="text-[10px] uppercase tracking-widest font-sans text-on-surface-variant mb-1">{label}</p>
               <p className="font-mono text-xl font-bold text-on-surface">{value}</p>
             </div>

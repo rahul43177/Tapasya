@@ -51,7 +51,7 @@ export default function StreakWarning({ currentStreak, lastActiveAt, streakRiskA
   if (!shouldShowWarning()) return null
 
   return (
-    <div className="bg-amber-500/20 border border-amber-500/30 p-4 mb-6 flex items-center justify-between">
+    <div className="bg-amber-500/20 border border-amber-500/30 p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="flex items-center gap-3">
         <Flame className="w-5 h-5 text-amber-500" />
         <div>

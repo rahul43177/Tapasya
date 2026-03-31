@@ -131,16 +131,16 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen px-6 lg:px-10 py-8">
+    <div className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       <div className="max-w-3xl mx-auto">
-        <h1 className="font-newsreader text-4xl italic font-bold text-on-surface mb-8">Settings</h1>
+        <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface mb-8">Settings</h1>
 
         {/* Account Settings */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Account</p>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             <div>
               <label className="block text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-2">Email</label>
               <p className="font-sans text-sm text-on-surface">{userEmail}</p>
@@ -151,10 +151,10 @@ export default function SettingsPage() {
 
         {/* Preferences */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Preferences</p>
           </div>
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-6">
             {/* Daily Goal */}
             <div>
               <label className="block text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
@@ -209,16 +209,16 @@ export default function SettingsPage() {
 
         {/* Focus Timer Defaults */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Focus Timer Defaults</p>
           </div>
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-6">
             {/* Default Mode */}
             <div>
               <label className="block text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
                 Default Mode
               </label>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => updateSetting('default_timer_mode', 'stopwatch')}
                   className={`flex-1 px-4 py-2 font-sans text-sm font-semibold transition-colors ${
@@ -247,7 +247,7 @@ export default function SettingsPage() {
               <label className="block text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
                 Pomodoro Duration
               </label>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 {[25, 50, 90].map((mins) => (
                   <button
                     key={mins}
@@ -269,7 +269,7 @@ export default function SettingsPage() {
               <label className="block text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-3">
                 Break Duration
               </label>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 {[5, 10, 15].map((mins) => (
                   <button
                     key={mins}
@@ -290,12 +290,12 @@ export default function SettingsPage() {
 
         {/* Privacy */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Privacy</p>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             {/* Public Profile */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <p className="font-sans text-sm text-on-surface font-medium">Public profile</p>
                 <p className="text-xs text-on-surface-variant mt-0.5">Appear on the global leaderboard and allow others to see your stats</p>
@@ -318,12 +318,12 @@ export default function SettingsPage() {
 
         {/* Notifications */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Notifications</p>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             {/* Daily Practice Reminder */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <p className="font-sans text-sm text-on-surface font-medium">Daily practice reminder</p>
                 <p className="text-xs text-on-surface-variant mt-0.5">Get reminded to practice every day</p>
@@ -343,7 +343,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Streak Risk Alerts */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <p className="font-sans text-sm text-on-surface font-medium">Streak risk alerts</p>
                 <p className="text-xs text-on-surface-variant mt-0.5">Warn when your streak is about to break</p>
@@ -366,10 +366,10 @@ export default function SettingsPage() {
 
         {/* Data Management */}
         <div className="bg-surface-container border border-surface-container-highest mb-6">
-          <div className="px-6 py-4 border-b border-surface-container-highest">
+          <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
             <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Data Management</p>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             <div>
               <p className="font-sans text-sm text-on-surface font-medium mb-2">Export all data</p>
               <p className="text-xs text-on-surface-variant mb-3">

@@ -21,14 +21,10 @@ export default async function GlobalLeaderboardPage() {
   // Filter out any entries with null IDs (should not happen, but TypeScript safety)
   const validUsers = (topUsers || []).filter(u => u.id !== null)
 
-  // Check if current user is on the leaderboard
-  const currentUserRank = validUsers.findIndex(u => u.id === user.id)
-  const isCurrentUserOnLeaderboard = currentUserRank !== -1
-
   // Get current user's profile
   const { data: currentUserProfile } = await supabase
     .from('profiles')
-    .select('is_public_profile, total_hours, total_sessions, current_global_streak, longest_streak')
+    .select('is_public_profile')
     .eq('id', user.id)
     .single()
 
@@ -37,21 +33,21 @@ export default async function GlobalLeaderboardPage() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Globe className="w-8 h-8 text-secondary" />
-            <h1 className="font-newsreader text-4xl italic font-bold text-on-surface">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+            <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-secondary" />
+            <h1 className="font-newsreader text-3xl sm:text-4xl italic font-bold text-on-surface">
               Global Leaderboard
             </h1>
           </div>
           <p className="font-sans text-sm text-on-surface-variant">
-            Top practitioners worldwide by total practice hours. Only users who have opted in to public profiles are shown.
+            Compare Tapasya-recorded hours for fair competition or total practice hours including starting hours. Only users with public profiles are shown.
           </p>
         </div>
 
         {/* Opt-in Banner */}
         {!currentUserProfile?.is_public_profile && (
           <div className="mb-6 p-4 bg-secondary/10 border-l-2 border-secondary">
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-3">
               <TrendingUp className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="font-sans text-sm text-on-surface font-medium mb-1">
@@ -66,30 +62,6 @@ export default async function GlobalLeaderboardPage() {
                 >
                   Go to Settings
                 </a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Current User Stats (if on leaderboard) */}
-        {isCurrentUserOnLeaderboard && (
-          <div className="mb-6 p-6 bg-brand-copper/5 border-l-4 border-brand-copper">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-sans text-xs uppercase tracking-widest text-on-surface-variant mb-1">
-                  Your Rank
-                </p>
-                <p className="font-mono text-3xl font-bold text-on-surface">
-                  #{currentUserRank + 1}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-sans text-xs uppercase tracking-widest text-on-surface-variant mb-1">
-                  App Recorded
-                </p>
-                <p className="font-mono text-3xl font-bold text-on-surface">
-                  {(validUsers[currentUserRank]?.app_recorded_hours ?? 0).toFixed(1)}
-                </p>
               </div>
             </div>
           </div>

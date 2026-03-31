@@ -84,7 +84,7 @@ export default function Heatmap({ data }: Props) {
   const gap = 2
 
   return (
-    <div className="bg-surface-container border border-surface-container-highest p-6">
+    <div className="bg-surface-container border border-surface-container-highest p-4 sm:p-6">
       <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant mb-4">Activity</p>
 
       <div className="overflow-x-auto">
@@ -97,7 +97,7 @@ export default function Heatmap({ data }: Props) {
                 <div
                   key={wi}
                   style={{ width: cellSize + gap, minWidth: cellSize + gap }}
-                  className="text-[9px] font-sans text-on-surface-variant leading-none"
+                  className="text-[8px] sm:text-[9px] font-sans text-on-surface-variant leading-none"
                 >
                   {label ? label.label : ''}
                 </div>
@@ -113,7 +113,7 @@ export default function Heatmap({ data }: Props) {
                 <div
                   key={i}
                   style={{ height: cellSize, width: 24 }}
-                  className="text-[9px] font-sans text-on-surface-variant flex items-center"
+                  className="text-[8px] sm:text-[9px] font-sans text-on-surface-variant flex items-center"
                 >
                   {day}
                 </div>

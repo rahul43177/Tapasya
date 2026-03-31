@@ -36,13 +36,13 @@ export default function AchievementStats({ totalUnlocked, totalAvailable, userAc
 
   return (
     <div className="bg-surface-container border border-surface-container-highest mb-8">
-      <div className="px-6 py-4 border-b border-surface-container-highest">
+      <div className="px-4 sm:px-6 py-4 border-b border-surface-container-highest">
         <p className="text-xs uppercase tracking-widest font-sans text-on-surface-variant">Progress</p>
       </div>
 
       {/* Main stats */}
-      <div className="p-6">
-        <div className="flex items-center gap-6 mb-6">
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
           {/* Circular progress */}
           <div className="relative w-24 h-24">
             <svg className="w-24 h-24 -rotate-90">
@@ -81,7 +81,7 @@ export default function AchievementStats({ totalUnlocked, totalAvailable, userAc
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {Object.entries({
             milestone: 'Milestones',
             streak: 'Streaks',

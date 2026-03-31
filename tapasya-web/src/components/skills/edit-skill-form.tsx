@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
+import { recalculateProfileTotalHours } from '@/lib/utils/profile'
 import { EMOJI_OPTIONS, TARGET_HOURS, COLORS, skillNameSchema, type SkillNameValues } from '@/lib/utils/skill-form-config'
 import type { Tables } from '@/lib/types'
 
@@ -60,6 +61,7 @@ export default function EditSkillForm({ skill }: Props) {
     setDeleting(true)
     const supabase = createClient()
     await supabase.from('skills').update({ is_active: false }).eq('id', skill.id).eq('user_id', skill.user_id)
+    await recalculateProfileTotalHours(skill.user_id)
     router.push('/skills')
     router.refresh()
   }
